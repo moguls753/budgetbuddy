@@ -1,0 +1,40 @@
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id                 :integer          not null, primary key
+#  currency           :string
+#  iban               :string
+#  name               :string
+#  status             :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  account_id         :string
+#  bank_connection_id :integer          not null
+#
+# Indexes
+#
+#  index_accounts_on_bank_connection_id  (bank_connection_id)
+#
+# Foreign Keys
+#
+#  bank_connection_id  (bank_connection_id => bank_connections.id)
+#
+
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bank_connection: one
+  account_id: MyString
+  iban: MyString
+  name: MyString
+  currency: MyString
+  status: MyString
+
+two:
+  bank_connection: two
+  account_id: MyString
+  iban: MyString
+  name: MyString
+  currency: MyString
+  status: MyString

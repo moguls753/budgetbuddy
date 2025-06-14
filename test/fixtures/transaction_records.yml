@@ -1,0 +1,46 @@
+# == Schema Information
+#
+# Table name: transaction_records
+#
+#  id             :integer          not null, primary key
+#  amount         :decimal(, )
+#  booking_date   :date
+#  category       :string
+#  currency       :string
+#  remittance     :text
+#  value_date     :date
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  account_id     :integer          not null
+#  transaction_id :string
+#
+# Indexes
+#
+#  index_transaction_records_on_account_id  (account_id)
+#
+# Foreign Keys
+#
+#  account_id  (account_id => accounts.id)
+#
+
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  transaction_id: MyString
+  amount: 9.99
+  currency: MyString
+  booking_date: 2025-06-12
+  value_date: 2025-06-12
+  remittance: MyText
+  category: MyString
+
+two:
+  account: two
+  transaction_id: MyString
+  amount: 9.99
+  currency: MyString
+  booking_date: 2025-06-12
+  value_date: 2025-06-12
+  remittance: MyText
+  category: MyString

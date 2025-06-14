@@ -1,0 +1,37 @@
+# == Schema Information
+#
+# Table name: agreements
+#
+#  id                    :integer          not null, primary key
+#  access_scope          :text
+#  access_valid_for_days :integer
+#  max_historical_days   :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  agreement_id          :string
+#  bank_connection_id    :integer          not null
+#
+# Indexes
+#
+#  index_agreements_on_bank_connection_id  (bank_connection_id)
+#
+# Foreign Keys
+#
+#  bank_connection_id  (bank_connection_id => bank_connections.id)
+#
+
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bank_connection: one
+  agreement_id: MyString
+  max_historical_days: 1
+  access_valid_for_days: 1
+  access_scope: MyText
+
+two:
+  bank_connection: two
+  agreement_id: MyString
+  max_historical_days: 1
+  access_valid_for_days: 1
+  access_scope: MyText
