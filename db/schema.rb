@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_152123) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_17_154053) do
   create_table "accounts", force: :cascade do |t|
     t.integer "bank_connection_id", null: false
     t.string "account_id"
@@ -20,6 +20,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_152123) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "interim_available"
+    t.decimal "interim_booked"
+    t.decimal "closing_booked"
     t.index ["bank_connection_id"], name: "index_accounts_on_bank_connection_id"
   end
 

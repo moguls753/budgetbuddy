@@ -20,7 +20,7 @@ class SyncAccountsJob < ApplicationJob
     end
 
     # 2) Pull latest account list
-    req = client.get_accounts(requisition_id: bc.requisition_id)
+    req = client.get_requisition(requisition_id: bc.requisition_id)
     bc.update!(status: req["status"])
     account_ids = req["accounts"] || []
 
@@ -28,15 +28,25 @@ class SyncAccountsJob < ApplicationJob
       # 3) Upsert the Account record
       acct_data = client.get("accounts/#{acct_id}/")
       account   = bc.accounts.find_or_initialize_by(account_id: acct_id)
+      balances = client.get_balances(account_id: account.account_id)
+
+      interim_available = balances["balances"].select { |a| a["balanceType"]=="interimAvailable" }.first["balanceAmount"]["amount"]
+      interim_booked = balances["balances"].select { |a| a["balanceType"]=="interimBooked" }.first["balanceAmount"]["amount"]
+      closing_booked = balances["balances"].select { |a| a["balanceType"]=="closingBooked" }.first["balanceAmount"]["amount"]
+
       account.update!(
         iban:     acct_data["iban"],
         name:     acct_data["ownerName"] || acct_data["name"],
         currency: acct_data["currency"],
-        status:   acct_data["status"]
+        status:   acct_data["status"],
+        interim_available:,
+        interim_booked:,
+        closing_booked:,
       )
 
+
       # 4) Fetch and persist all transactions
-      transactions = client.list_transactions(account_id: acct_id)
+      transactions = client.get_transactions(account_id: acct_id)
 
       transactions.each do |t|
         # use internalTransactionId as your transaction_id

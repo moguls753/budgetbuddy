@@ -215,7 +215,7 @@ const balanceData = computed(() => {
     ([d1], [d2]) => new Date(d1) - new Date(d2),
   )
 
-  let balance = 1000 // Starting balance
+  let balance = á // Starting balance
   const cumulativeValues = sorted.map(([, value]) => {
     balance += value
     return balance.toFixed(2)

@@ -1,5 +1,5 @@
 module GoCardless
-  require 'faraday'
+  require "faraday"
   class Client
     BASE_URL = "https://bankaccountdata.gocardless.com/api/v2/"
 
@@ -33,17 +33,33 @@ module GoCardless
       post("requisitions/", body: body)
     end
 
+    def get_requisition(requisition_id:)
+      get("requisitions/#{requisition_id}/")
+    end
+
+    def get_requisitions
+      get("requisitions/")
+    end
+
     def requisition_active?(requisition_id:)
       resp = fetch_requisition(requisition_id)
       return false unless resp
       resp["status"] != "EX"
     end
 
-    def get_accounts(requisition_id:)
-      get("requisitions/#{requisition_id}/")
+    def get_account(account_id:)
+      get("accounts/#{account_id}/")
     end
 
-    def list_transactions(account_id:, date_from: nil, date_to: nil)
+    def get_details(account_id:)
+      get("accounts/#{account_id}/details/")
+    end
+
+    def get_balances(account_id:)
+      get("accounts/#{account_id}/balances/")
+    end
+
+    def get_transactions(account_id:, date_from: nil, date_to: nil)
       params = {}
       params[:date_from] = date_from if date_from
       params[:date_to]   = date_to   if date_to
@@ -86,6 +102,11 @@ module GoCardless
         req.params = params if method == :get
         req.body   = body.to_json  if method == :post
       end
+
+      puts "Rate Limit: #{response.headers['http_x_ratelimit_limit']}"
+      puts "Rate Limit - Remaining: #{response.headers['http_x_ratelimit_remaining']}"
+      puts "Rate Limit - Reset: #{response.headers['http_x_ratelimit_reset']}"
+
       JSON.parse(response.body)
     end
 
