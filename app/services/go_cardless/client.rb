@@ -23,11 +23,14 @@ module GoCardless
       })
     end
 
-    def create_requisition(institution_id:, redirect:)
-      post("requisitions/", body: {
-        institution_id:,
-        redirect:
-      })
+    def create_requisition(institution_id:, redirect:, agreement: nil)
+      body = {
+        institution_id: institution_id,
+        redirect:       redirect
+      }
+      body[:agreement] = agreement if agreement
+
+      post("requisitions/", body: body)
     end
 
     def requisition_active?(requisition_id:)
@@ -44,7 +47,11 @@ module GoCardless
       params = {}
       params[:date_from] = date_from if date_from
       params[:date_to]   = date_to   if date_to
-      resp = get("accounts/#{account_id}/transactions/", params: params)
+      begin
+        resp = get("accounts/#{account_id}/transactions/", params: params)
+      rescue Faraday::TooManyRequestsError => e
+        binding.pry
+      end
       resp["transactions"]["booked"] + resp["transactions"]["pending"]
     end
 
@@ -63,6 +70,13 @@ module GoCardless
       request(:post, path, body: body)
     end
 
+    def setup_connection
+      @conn = Faraday.new(url: BASE_URL) do |f|
+        f.request  :json
+        f.response :raise_error
+      end
+    end
+
     private
 
     def request(method, path, params: {}, body: {})
@@ -73,13 +87,6 @@ module GoCardless
         req.body   = body.to_json  if method == :post
       end
       JSON.parse(response.body)
-    end
-
-    def setup_connection
-      @conn = Faraday.new(url: BASE_URL) do |f|
-        f.request  :json
-        f.response :raise_error
-      end
     end
 
     def fetch_requisition(requisition_id)

@@ -2,17 +2,24 @@
 #
 # Table name: transaction_records
 #
-#  id             :integer          not null, primary key
-#  amount         :decimal(, )
-#  booking_date   :date
-#  category       :string
-#  currency       :string
-#  remittance     :text
-#  value_date     :date
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  account_id     :integer          not null
-#  transaction_id :string
+#  id                    :integer          not null, primary key
+#  amount                :decimal(, )
+#  bank_transaction_code :string
+#  booking_date          :date
+#  category              :string
+#  creditor_iban         :string
+#  creditor_name         :string
+#  currency              :string
+#  debtor_iban           :string
+#  debtor_name           :string
+#  remittance            :text
+#  value_date            :date
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  account_id            :integer          not null
+#  creditor_id           :string
+#  mandate_id            :string
+#  transaction_id        :string
 #
 # Indexes
 #

@@ -5,9 +5,9 @@
     <table class="table-auto w-full mt-4">
       <thead>
         <tr>
-          <th class="px-4 py-2">Date</th>
-          <th class="px-4 py-2">Amount</th>
-          <th class="px-4 py-2">Description</th>
+          <th class="px-4 py-2">Datum</th>
+          <th class="px-4 py-2">Betrag</th>
+          <th class="px-4 py-2">Verwendungszweck</th>
         </tr>
       </thead>
       <tbody>

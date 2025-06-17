@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_092048) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_15_152123) do
   create_table "accounts", force: :cascade do |t|
     t.integer "bank_connection_id", null: false
     t.string "account_id"
@@ -74,6 +74,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_092048) do
     t.string "category"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "mandate_id"
+    t.string "creditor_id"
+    t.string "creditor_name"
+    t.string "creditor_iban"
+    t.string "debtor_name"
+    t.string "debtor_iban"
+    t.string "bank_transaction_code"
     t.index ["account_id"], name: "index_transaction_records_on_account_id"
   end
 

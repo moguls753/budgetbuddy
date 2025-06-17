@@ -26,11 +26,12 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
-import "../styles/application.css"     // Tailwind + DaisyUI
+import "../styles/application.css"
 import { createApp } from "vue"
-import Hello from "../components/Hello.vue"
+// import Hello from "../components/Hello.vue"
+import Chart from "../components/Chart.vue"
 
 document.addEventListener("DOMContentLoaded", () => {
   const el = document.getElementById("vue-root")
-  if (el) createApp(Hello).mount(el)
+  if (el) createApp(Chart).mount(el)
 })

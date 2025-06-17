@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="luxury">
   <head>
     <title><%= content_for(:title) || "Budgetbuddy" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -33,6 +33,7 @@
   </head>
 
   <body>
+    <%= render "layouts/navbar" %>
     <%= yield %>
   </body>
 </html>
