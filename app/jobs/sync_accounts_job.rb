@@ -5,7 +5,6 @@ class SyncAccountsJob < ApplicationJob
     bc     = BankConnection.find(bank_connection_id)
     client = GoCardless::Client.new
 
-    # 1) Refresh or re-create requisition if expired
     unless client.requisition_active?(requisition_id: bc.requisition_id)
       new_req = client.create_requisition(
         institution_id: bc.institution_id,
@@ -19,17 +18,25 @@ class SyncAccountsJob < ApplicationJob
       )
     end
 
-    # 2) Pull latest account list
     req = client.get_requisition(requisition_id: bc.requisition_id)
     bc.update!(status: req["status"])
     account_ids = req["accounts"] || []
 
     account_ids.each do |acct_id|
-      # 3) Upsert the Account record
-      acct_data = client.get("accounts/#{acct_id}/")
-      account   = bc.accounts.find_or_initialize_by(account_id: acct_id)
-      balances = client.get_balances(account_id: account.account_id)
+      Rails.cache.clear
+      cached_data = Rails.cache.fetch("account_data:#{acct_id}", expires_in: 6.hours) do
+        {
+          account_data: client.get_account(account_id: acct_id),
+          balances: client.get_balances(account_id: acct_id),
+          transactions: client.get_transactions(account_id: acct_id)
+        }
+      end
 
+      acct_data = cached_data[:account_data]
+      balances = cached_data[:balances]
+      transactions = cached_data[:transactions]
+
+      account   = bc.accounts.find_or_initialize_by(account_id: acct_id)
       interim_available = balances["balances"].select { |a| a["balanceType"]=="interimAvailable" }.first["balanceAmount"]["amount"]
       interim_booked = balances["balances"].select { |a| a["balanceType"]=="interimBooked" }.first["balanceAmount"]["amount"]
       closing_booked = balances["balances"].select { |a| a["balanceType"]=="closingBooked" }.first["balanceAmount"]["amount"]
@@ -44,12 +51,7 @@ class SyncAccountsJob < ApplicationJob
         closing_booked:,
       )
 
-
-      # 4) Fetch and persist all transactions
-      transactions = client.get_transactions(account_id: acct_id)
-
       transactions.each do |t|
-        # use internalTransactionId as your transaction_id
         uid = t.fetch("internalTransactionId")
 
         tx = account.transaction_records.find_or_initialize_by(transaction_id: uid)

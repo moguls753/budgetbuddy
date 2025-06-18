@@ -103,6 +103,7 @@ module GoCardless
         req.body   = body.to_json  if method == :post
       end
 
+      puts "Request to: #{path}"
       puts "Rate Limit: #{response.headers['http_x_ratelimit_limit']}"
       puts "Rate Limit - Remaining: #{response.headers['http_x_ratelimit_remaining']}"
       puts "Rate Limit - Reset: #{response.headers['http_x_ratelimit_reset']}"
