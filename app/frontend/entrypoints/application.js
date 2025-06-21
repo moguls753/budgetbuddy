@@ -26,6 +26,7 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 import "../styles/application.css"
 import { createApp } from "vue"
 // import Hello from "../components/Hello.vue"

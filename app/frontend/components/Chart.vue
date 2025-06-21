@@ -1,9 +1,5 @@
 <template>
-  <div class="bg-base-100 rounded-xl p-6 shadow w-full">
-    <h2 class="text-3xl font-bold mb-6 text-center">
-      Finanz Dashboard
-    </h2>
-
+  <div class="bg-base-100 rounded-xl p-4 shadow w-full">
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div class="stat bg-base-200 rounded-lg">

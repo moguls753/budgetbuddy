@@ -32,8 +32,10 @@
 
   </head>
 
-  <body>
-    <%= render "layouts/navbar" %>
-    <%= yield %>
+  <body class="flex min-h-screen">
+    <%= render "layouts/sidebar" %>
+    <main class="flex-1 overflow-auto">
+      <%= yield %>
+    </main>
   </body>
 </html>
