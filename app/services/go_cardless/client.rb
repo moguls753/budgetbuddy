@@ -47,10 +47,6 @@ module GoCardless
       resp["status"] != "EX"
     end
 
-    def get_account(account_id:)
-      get("accounts/#{account_id}/")
-    end
-
     def get_account_with_headers(account_id:)
       begin
         body, headers = request(:get, "accounts/#{account_id}/")
@@ -60,10 +56,6 @@ module GoCardless
       end
     end
 
-    def get_balances(account_id:)
-      get("accounts/#{account_id}/balances/")
-    end
-
     def get_balances_with_headers(account_id:)
       begin
         body, headers = request(:get, "accounts/#{account_id}/balances/")
@@ -71,18 +63,6 @@ module GoCardless
       rescue Faraday::TooManyRequestsError => e
         { body: [], headers: e.response[:headers] }
       end
-    end
-
-    def get_transactions(account_id:, date_from: nil, date_to: nil)
-      params = {}
-      params[:date_from] = date_from if date_from
-      params[:date_to]   = date_to   if date_to
-      begin
-        response = get("accounts/#{account_id}/transactions/", params: params)
-      rescue Faraday::TooManyRequestsError
-        nil
-      end
-      response["transactions"]["booked"] + response["transactions"]["pending"]
     end
 
     def get_transactions_with_headers(account_id:, date_from: nil, date_to: nil)
@@ -96,10 +76,6 @@ module GoCardless
       rescue Faraday::TooManyRequestsError => e
         { body: [], headers: e.response[:headers] }
       end
-    end
-
-    def get_details(account_id:)
-      get("accounts/#{account_id}/details/")
     end
 
     def get_details_with_headers(account_id:)

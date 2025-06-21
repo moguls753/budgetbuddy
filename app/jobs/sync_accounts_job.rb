@@ -23,12 +23,12 @@ class SyncAccountsJob < ApplicationJob
     account_ids = req["accounts"] || []
 
     account_ids.each do |acct_id|
+      account = bc.accounts.find_or_initialize_by(account_id: acct_id)
+
       balances = client.get_balances_with_headers(account_id: acct_id)
       transactions = client.get_transactions_with_headers(account_id: acct_id)
       details = client.get_details_with_headers(account_id: acct_id)
       account_data = client.get_account_with_headers(account_id: acct_id)
-
-      account = bc.accounts.find_or_initialize_by(account_id: acct_id)
 
       update_attrs = {}
 
