@@ -1,7 +1,7 @@
 <template>
   <div class="bg-base-100 rounded-xl p-6 shadow w-full">
     <h2 class="text-3xl font-bold mb-6 text-center">
-      Finanz Dashboard
+      Overview
     </h2>
 
     <!-- Summary Cards -->

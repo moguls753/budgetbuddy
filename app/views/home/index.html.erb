@@ -1,1 +1,14 @@
-<div id="vue-root" data-transactions="<%= @transactions.to_json %>"></div>
+<div class="drawer lg:drawer-open">
+  <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content flex flex-col items-center justify-center">
+    <div id="vue-root" data-transactions="<%= @transactions.to_json %>" data-balances="<%= @balances_json.to_json %>" data-details="<%= @details_json.to_json %>"></div>
+  </div>
+  <div class="drawer-side">
+    <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
+    <ul class="menu bg-base-200 text-base-content min-h-full w-40 p-4">
+      <li><a>Overview</a></li>
+      <li><a>Account</a></li>
+      <li><a>Settings</a></li>
+    </ul>
+  </div>
+</div>

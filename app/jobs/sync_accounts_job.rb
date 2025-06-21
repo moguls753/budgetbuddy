@@ -23,53 +23,74 @@ class SyncAccountsJob < ApplicationJob
     account_ids = req["accounts"] || []
 
     account_ids.each do |acct_id|
-      Rails.cache.clear
-      cached_data = Rails.cache.fetch("account_data:#{acct_id}", expires_in: 6.hours) do
-        {
-          account_data: client.get_account(account_id: acct_id),
-          balances: client.get_balances(account_id: acct_id),
-          transactions: client.get_transactions(account_id: acct_id)
-        }
+      balances = client.get_balances_with_headers(account_id: acct_id)
+      transactions = client.get_transactions_with_headers(account_id: acct_id)
+      details = client.get_details_with_headers(account_id: acct_id)
+      account_data = client.get_account_with_headers(account_id: acct_id)
+
+      account = bc.accounts.find_or_initialize_by(account_id: acct_id)
+
+      update_attrs = {}
+
+      if account_data[:body].present?
+        update_attrs[:iban] = account_data[:body]["iban"]
+        update_attrs[:name] = account_data[:body]["ownerName"]
+        update_attrs[:status] = account_data[:body]["status"]
       end
 
-      acct_data = cached_data[:account_data]
-      balances = cached_data[:balances]
-      transactions = cached_data[:transactions]
+      if balances[:body].present?
+        interim_available = balances[:body]["balances"].find { |a| a["balanceType"] == "interimAvailable" }&.dig("balanceAmount", "amount")
+        interim_booked = balances[:body]["balances"].find { |a| a["balanceType"] == "interimBooked" }&.dig("balanceAmount", "amount")
+        closing_booked = balances[:body]["balances"].find { |a| a["balanceType"] == "closingBooked" }&.dig("balanceAmount", "amount")
 
-      account   = bc.accounts.find_or_initialize_by(account_id: acct_id)
-      interim_available = balances["balances"].select { |a| a["balanceType"]=="interimAvailable" }.first["balanceAmount"]["amount"]
-      interim_booked = balances["balances"].select { |a| a["balanceType"]=="interimBooked" }.first["balanceAmount"]["amount"]
-      closing_booked = balances["balances"].select { |a| a["balanceType"]=="closingBooked" }.first["balanceAmount"]["amount"]
+        update_attrs[:interim_available] = interim_available
+        update_attrs[:interim_booked] = interim_booked
+        update_attrs[:closing_booked] = closing_booked
+      end
 
-      account.update!(
-        iban:     acct_data["iban"],
-        name:     acct_data["ownerName"] || acct_data["name"],
-        currency: acct_data["currency"],
-        status:   acct_data["status"],
-        interim_available:,
-        interim_booked:,
-        closing_booked:,
+      if details[:body].present?
+        update_attrs[:currency] = details[:body]["currency"]
+      end
+
+      update_attrs.merge!(
+        balances_ratelimit: balances[:headers]["http_x_ratelimit_account_success_limit"],
+        balances_ratelimit_remaining: balances[:headers]["http_x_ratelimit_account_success_remaining"],
+        balances_ratelimit_reset: balances[:headers]["http_x_ratelimit_account_success_reset"],
+        details_ratelimit: details[:headers]["http_x_ratelimit_account_success_limit"],
+        details_ratelimit_remaining: details[:headers]["http_x_ratelimit_account_success_remaining"],
+        details_ratelimit_reset: details[:headers]["http_x_ratelimit_account_success_reset"],
+        transactions_ratelimit: transactions[:headers]["http_x_ratelimit_account_success_limit"],
+        transactions_ratelimit_remaining: transactions[:headers]["http_x_ratelimit_account_success_remaining"],
+        transactions_ratelimit_reset: transactions[:headers]["http_x_ratelimit_account_success_reset"],
+        account_ratelimit: account_data[:headers]["http_x_ratelimit_limit"],
+        account_ratelimit_remaining: account_data[:headers]["http_x_ratelimit_remaining"],
+        account_ratelimit_reset: account_data[:headers]["http_x_ratelimit_reset"],
       )
 
-      transactions.each do |t|
-        uid = t.fetch("internalTransactionId")
+      account.update!(update_attrs)
 
-        tx = account.transaction_records.find_or_initialize_by(transaction_id: uid)
-        tx.assign_attributes(
-          amount:                 t.dig("transactionAmount", "amount"),
-          currency:               t.dig("transactionAmount", "currency"),
-          booking_date:           t["bookingDate"],
-          value_date:             t["valueDate"],
-          remittance:             t["remittanceInformationUnstructured"],
-          mandate_id:             t["mandateId"],
-          creditor_id:            t["creditorId"],
-          creditor_name:          t["creditorName"],
-          creditor_iban:          t.dig("creditorAccount", "iban"),
-          debtor_name:            t["debtorName"],
-          debtor_iban:            t.dig("debtorAccount", "iban"),
-          bank_transaction_code:  t["proprietaryBankTransactionCode"]
-        )
-        tx.save!
+      if transactions[:body].present?
+        transactions[:body].each do |t|
+          uid = t.fetch("internalTransactionId")
+          tx = account.transaction_records.find_or_initialize_by(transaction_id: uid)
+          tx.assign_attributes(
+            amount:                 t.dig("transactionAmount", "amount"),
+            currency:               t.dig("transactionAmount", "currency"),
+            booking_date:           t["bookingDate"],
+            value_date:             t["valueDate"],
+            remittance:             t["remittanceInformationUnstructured"],
+            mandate_id:             t["mandateId"],
+            creditor_id:            t["creditorId"],
+            creditor_name:          t["creditorName"],
+            creditor_iban:          t.dig("creditorAccount", "iban"),
+            debtor_name:            t["debtorName"],
+            debtor_iban:            t.dig("debtorAccount", "iban"),
+            bank_transaction_code:  t["proprietaryBankTransactionCode"]
+          )
+          tx.save!
+        end
+      else
+        Rails.logger.info "No transactions to process for account #{acct_id}"
       end
     end
   end

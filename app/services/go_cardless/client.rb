@@ -51,12 +51,26 @@ module GoCardless
       get("accounts/#{account_id}/")
     end
 
-    def get_details(account_id:)
-      get("accounts/#{account_id}/details/")
+    def get_account_with_headers(account_id:)
+      begin
+        body, headers = request(:get, "accounts/#{account_id}/")
+        { body: body, headers: headers }
+      rescue Faraday::TooManyRequestsError => e
+        { body: [], headers: e.response[:headers] }
+      end
     end
 
     def get_balances(account_id:)
       get("accounts/#{account_id}/balances/")
+    end
+
+    def get_balances_with_headers(account_id:)
+      begin
+        body, headers = request(:get, "accounts/#{account_id}/balances/")
+        { body: body, headers: headers }
+      rescue Faraday::TooManyRequestsError => e
+        { body: [], headers: e.response[:headers] }
+      end
     end
 
     def get_transactions(account_id:, date_from: nil, date_to: nil)
@@ -64,11 +78,37 @@ module GoCardless
       params[:date_from] = date_from if date_from
       params[:date_to]   = date_to   if date_to
       begin
-        resp = get("accounts/#{account_id}/transactions/", params: params)
-      rescue Faraday::TooManyRequestsError => e
-        binding.pry
+        response = get("accounts/#{account_id}/transactions/", params: params)
+      rescue Faraday::TooManyRequestsError
+        nil
       end
-      resp["transactions"]["booked"] + resp["transactions"]["pending"]
+      response["transactions"]["booked"] + response["transactions"]["pending"]
+    end
+
+    def get_transactions_with_headers(account_id:, date_from: nil, date_to: nil)
+      params = {}
+      params[:date_from] = date_from if date_from
+      params[:date_to]   = date_to   if date_to
+      begin
+        body, headers = request(:get, "accounts/#{account_id}/transactions/", params: params)
+        transactions = body["transactions"]["booked"] + body["transactions"]["pending"]
+        { body: transactions, headers: headers }
+      rescue Faraday::TooManyRequestsError => e
+        { body: [], headers: e.response[:headers] }
+      end
+    end
+
+    def get_details(account_id:)
+      get("accounts/#{account_id}/details/")
+    end
+
+    def get_details_with_headers(account_id:)
+      begin
+        body, headers = request(:get, "accounts/#{account_id}/details/")
+        { body: body, headers: headers }
+      rescue Faraday::TooManyRequestsError => e
+        { body: [], headers: e.response[:headers] }
+      end
     end
 
     def self.new_without_token
@@ -79,11 +119,13 @@ module GoCardless
     end
 
     def get(path, params: {})
-      request(:get, path, params: params)
+      body, _ = request(:get, path, params: params)
+      body
     end
 
     def post(path, body:)
-      request(:post, path, body: body)
+      body, _ = request(:post, path, body: body)
+      body
     end
 
     def setup_connection
@@ -103,12 +145,7 @@ module GoCardless
         req.body   = body.to_json  if method == :post
       end
 
-      puts "Request to: #{path}"
-      puts "Rate Limit: #{response.headers['http_x_ratelimit_limit']}"
-      puts "Rate Limit - Remaining: #{response.headers['http_x_ratelimit_remaining']}"
-      puts "Rate Limit - Reset: #{response.headers['http_x_ratelimit_reset']}"
-
-      JSON.parse(response.body)
+      [ JSON.parse(response.body), response.headers ]
     end
 
     def fetch_requisition(requisition_id)

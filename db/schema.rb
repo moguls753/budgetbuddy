@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_17_154053) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_19_084900) do
   create_table "accounts", force: :cascade do |t|
     t.integer "bank_connection_id", null: false
     t.string "account_id"
@@ -23,6 +23,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_154053) do
     t.decimal "interim_available"
     t.decimal "interim_booked"
     t.decimal "closing_booked"
+    t.integer "account_ratelimit"
+    t.integer "balances_ratelimit"
+    t.integer "details_ratelimit"
+    t.integer "transactions_ratelimit"
+    t.integer "account_ratelimit_reset"
+    t.integer "balances_ratelimit_reset"
+    t.integer "details_ratelimit_reset"
+    t.integer "transactions_ratelimit_reset"
+    t.integer "account_ratelimit_remaining"
+    t.integer "balances_ratelimit_remaining"
+    t.integer "details_ratelimit_remaining"
+    t.integer "transactions_ratelimit_remaining"
     t.index ["bank_connection_id"], name: "index_accounts_on_bank_connection_id"
   end
 
