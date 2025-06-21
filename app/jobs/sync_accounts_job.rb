@@ -49,7 +49,7 @@ class SyncAccountsJob < ApplicationJob
       end
 
       if details[:body].present?
-        update_attrs[:currency] = details[:body]["currency"]
+        update_attrs[:currency] = details[:body]["account"]["currency"]
       end
 
       update_attrs.merge!(
