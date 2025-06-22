@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   private
 
   def load_sidebar_data
-    @accounts = Current.user.accounts.order(:name)
+    @accounts = Current.user.accounts
     @transactions = Current.user.bank_connections.first.accounts.first.transaction_records.all.order("booking_date DESC")
     @balances_json = @accounts.map(&:balances_json)
 

@@ -29,10 +29,50 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 import '@fortawesome/fontawesome-free/css/all.css'
 import "../styles/application.css"
 import { createApp } from "vue"
-// import Hello from "../components/Hello.vue"
-import Chart from "../components/Chart.vue"
+import HomeDashboard from "../components/HomeDashboard.vue"
+import AccountDashboard from "../components/AccountDashboard.vue"
+import ForecastDashboard from "../components/ForecastDashboard.vue"
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart, BarChart, PieChart } from 'echarts/charts'
+import {
+  GridComponent,
+  TooltipComponent,
+  TitleComponent,
+  LegendComponent,
+} from 'echarts/components'
+
+use([
+  CanvasRenderer,
+  LineChart,
+  BarChart,
+  PieChart,
+  GridComponent,
+  TooltipComponent,
+  TitleComponent,
+  LegendComponent,
+])
+
+const registry = {
+  HomeDashboard,
+  AccountDashboard,
+  ForecastDashboard,
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  const el = document.getElementById("vue-root")
-  if (el) createApp(Chart).mount(el)
+  document.querySelectorAll("[data-component]").forEach(el => {
+    const name = el.dataset.component
+    const component = registry[name]
+    if (!component) return
+
+    const props = Object.entries(el.dataset)
+      .filter(([key]) => key !== "component")
+      .reduce((h, [key, val]) => {
+        h[key] = JSON.parse(val)
+        return h
+      }, {})
+
+    createApp(component, props).mount(el)
+  })
 })
+

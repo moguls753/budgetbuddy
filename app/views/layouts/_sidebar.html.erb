@@ -1,5 +1,4 @@
 <aside class="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r dark:bg-base-100 dark:border-gray-700">
-  <!-- Logo / Brand -->
   <a href="/" class="flex items-center justify-center mb-6 text-secondary-content">
     <i class="fas fa-piggy-bank text-2xl"></i>
     <span class="ml-2 text-xl font-bold">BudgetBuddy</span>
@@ -7,16 +6,14 @@
 
   <div class="flex flex-col justify-between flex-1 mt-6">
     <nav class="space-y-4">
-      <!-- Global “All Accounts” link -->
-      <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+      <a href="/" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
           <path d="M3 9L12 2L21 9V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="mx-4 font-medium">All Accounts</span>
+        <span class="mx-4 font-medium">Home</span>
       </a>
 
-      <!-- Per-account collapsible groups -->
       <% @accounts.each do |account| %>
         <div class="space-y-1">
           <button
