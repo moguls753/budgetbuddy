@@ -32,4 +32,8 @@
 
 class TransactionRecord < ApplicationRecord
   belongs_to :account
+
+  def to_frontend_json
+    as_json(except: [ :created_at, :updated_at ])
+  end
 end

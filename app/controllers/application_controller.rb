@@ -9,10 +9,5 @@ class ApplicationController < ActionController::Base
 
   def load_sidebar_data
     @accounts = Current.user.accounts
-    @transactions = Current.user.bank_connections.first.accounts.first.transaction_records.all.order("booking_date DESC")
-    @balances_json = @accounts.map(&:balances_json)
-
-    # ratelimits und andere info felder
-    @details_json = @accounts.map(&:details_json)
   end
 end

@@ -1,374 +1,130 @@
 <template>
-  <div class="bg-base-100 rounded-xl p-4 shadow w-full">
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Aktueller Saldo</div>
-        <div class="stat-value text-2xl" :class="currentBalance >= 0 ? 'text-success' : 'text-error'">
-          €{{ currentBalance }}
-        </div>
-      </div>
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Ausgaben (30 Tage)</div>
-        <div class="stat-value text-2xl text-error">€{{ totalSpending }}</div>
-      </div>
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Ø Tägliche Ausgaben</div>
-        <div class="stat-value text-2xl text-warning">€{{ avgDailySpending }}</div>
-      </div>
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Transaktionen</div>
-        <div class="stat-value text-2xl">{{ transactionCount }}</div>
-      </div>
-    </div>
+  <div class="bg-base-100 rounded-2xl p-6 shadow-lg w-full">
+    <!-- Header Section with Total Balance -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold mb-6 text-base-content">Finanzübersicht</h2>
 
-    <!-- Charts Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Balance Chart -->
-      <div class="bg-base-200 rounded-lg p-4">
-        <h3 class="text-lg font-semibold mb-2">{{ }}</h3>
-        <div ref="balanceContainer" style="height: 300px;">
-          <v-chart
-            v-if="chartReady"
-            :option="balanceChartOptions"
-            :style="{ width: '100%', height: '100%' }"
-            autoresize
-          />
-        </div>
-      </div>
-
-      <!-- Daily Spending Chart -->
-      <div class="bg-base-200 rounded-lg p-4">
-        <h3 class="text-lg font-semibold mb-2">Tägliche Ausgaben</h3>
-        <div ref="spendingContainer" style="height: 300px;">
-          <v-chart
-            v-if="chartReady"
-            :option="dailySpendingChartOptions"
-            :style="{ width: '100%', height: '100%' }"
-            autoresize
-          />
-        </div>
-      </div>
-
-      <!-- Category Pie Chart -->
-      <div class="bg-base-200 rounded-lg p-4">
-        <h3 class="text-lg font-semibold mb-2">Ausgaben nach Kategorie</h3>
-        <div ref="categoryContainer" style="height: 300px;">
-          <v-chart
-            v-if="chartReady"
-            :option="categoryPieChartOptions"
-            :style="{ width: '100%', height: '100%' }"
-            autoresize
-          />
-        </div>
-      </div>
-
-      <!-- Top Merchants Chart -->
-      <div class="bg-base-200 rounded-lg p-4">
-        <h3 class="text-lg font-semibold mb-2">Top 10 Händler</h3>
-        <div ref="merchantContainer" style="height: 300px;">
-          <v-chart
-            v-if="chartReady"
-            :option="merchantBarChartOptions"
-            :style="{ width: '100%', height: '100%' }"
-            autoresize
-          />
+      <!-- Total Balance Card -->
+      <div class="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl p-6 border border-primary/20">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-base-content/60 mb-1">Gesamtvermögen</p>
+            <p class="text-3xl font-bold" :class="currentTotalBalance >= 0 ? 'text-success' : 'text-error'">
+              €{{ currentTotalBalance.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            </p>
+          </div>
+          <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Recent Transactions -->
-    <div class="mt-6 bg-base-200 rounded-lg p-4">
-      <h3 class="text-lg font-semibold mb-3">Letzte Transaktionen</h3>
-      <div class="overflow-x-auto">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th>Datum</th>
-              <th>Händler</th>
-              <th>Kategorie</th>
-              <th class="text-right">Betrag</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="tx in recentTransactions" :key="tx.id">
-              <td>{{ formatDate(tx.booking_date) }}</td>
-              <td>{{ tx.creditor_name || 'Unbekannt' }}</td>
-              <td>
-                <span class="badge badge-sm" :class="getCategoryBadgeClass(tx)">
-                  {{ getCategoryForTransaction(tx) }}
-                </span>
-              </td>
-              <td class="text-right font-mono" :class="Number(tx.amount) < 0 ? 'text-error' : 'text-success'">
-                €{{ Math.abs(Number(tx.amount)).toFixed(2) }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- Accounts Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div
+        v-for="account in accounts"
+        :key="account.id"
+        class="group bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:bg-base-300 hover:scale-[1.02] border border-base-300 hover:border-primary/30"
+      >
+        <!-- Account Header -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-base-content">{{ account.name }}</h3>
+          <div class="badge badge-sm badge-ghost">{{ account.iban }}</div>
+        </div>
+
+        <!-- Account Balance -->
+        <div class="mb-6">
+          <p class="text-sm text-base-content/60 mb-1">Kontostand</p>
+          <p class="text-2xl font-bold" :class="balanceFor(account.iban) >= 0 ? 'text-success' : 'text-error'">
+            €{{ balanceFor(account.iban).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          </p>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Recent Transactions -->
+          <div class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm font-semibold text-base-content">Letzte Transaktionen</h4>
+              <svg class="w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+
+            <div class="space-y-2">
+              <div v-if="recentTransactionsFor(account.id).length === 0" class="text-center py-4 text-base-content/40 text-sm">
+                Keine Transaktionen
+              </div>
+              <div
+                v-for="tx in recentTransactionsFor(account.id)"
+                :key="tx.id"
+                class="flex items-center justify-between py-2 border-b border-base-300 last:border-0"
+              >
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-base-content/60">{{ formatDate(tx.booking_date) }}</p>
+                  <p class="text-sm font-medium truncate">{{ tx.creditor_name || 'Unbekannt' }}</p>
+                </div>
+                <p class="text-sm font-mono ml-2" :class="Number(tx.amount) < 0 ? 'text-error' : 'text-success'">
+                  {{ Number(tx.amount) < 0 ? '-' : '+' }}€{{ Math.abs(Number(tx.amount)).toFixed(2) }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm font-semibold text-base-content">Übersicht</h4>
+              <svg class="w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <AccountQuickStats
+              :account="account"
+              :transactions="transactions[account.id] || []"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, onBeforeUnmount } from 'vue'
-import VChart from 'vue-echarts'
+import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import AccountQuickStats from './AccountQuickStats.vue'
 
 const props = defineProps({
-  transactions:    { type: Array, required: true },
-  balances:        { type: Array, required: true },
-  details:         { type: Array, required: true },
-  stats:           { type: Array, required: true },
+  transactions: { type: Array, required: true },
+  accounts: { type: Array, required: true },
+  stats: { type: Object, required: true },
 })
+
 const transactions = props.transactions
-const balances     = props.balances
-const details      = props.details
-const stats      = props.stats
+const accounts = props.accounts
 
-const currentBalance = balances[0].interim_available
+const currentTotalBalance = accounts.reduce((sum, item) => {
+  return sum + item.interim_available
+}, 0)
 
-const totalSpending = stats.spending.last_period
+const balanceFor = (iban) => {
+  const account = accounts.find(account => account.iban === iban)
+  return account ? account.interim_available : 0
+}
 
-const avgDailySpending = computed(() => {
-  const spending = dailySpendingData.value.values
-  if (spending.length === 0) return '0.00'
-  const sum = spending.reduce((acc, val) => acc + parseFloat(val), 0)
-  return (sum / spending.length).toFixed(2)
-})
+const recentTransactionsFor = (account_id) => {
+  return transactions[account_id]?.slice(0, 3) || []
+}
 
-const transactionCount = computed(() => transactions.length)
-
-const recentTransactions = computed(() => {
-  return [...transactions]
-    .sort((a, b) => new Date(b.booking_date) - new Date(a.booking_date))
-    .slice(0, 5)
-})
-
-// Helper functions
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('de-DE', {
     day: '2-digit',
-    month: 'short',
-    year: 'numeric'
+    month: '2-digit',
   })
 }
-
-const getCategoryForTransaction = (tx) => {
-  const merchant = tx.creditor_name || ''
-
-  if (merchant.match(/REWE|EDEKA|IHR BAECKER/i)) return 'Lebensmittel'
-  if (merchant.match(/Pizzeria|Restaurant/i)) return 'Restaurants'
-  if (merchant.match(/APOTHEKE/i)) return 'Gesundheit'
-  if (merchant.match(/Drillisch/i)) return 'Telekom'
-  if (merchant.match(/BARCLAYS/i)) return 'Kreditkarte'
-  return 'Sonstiges'
-}
-
-const getCategoryBadgeClass = (tx) => {
-  const category = getCategoryForTransaction(tx)
-  const classes = {
-    'Lebensmittel': 'badge-success',
-    'Restaurants': 'badge-warning',
-    'Gesundheit': 'badge-info',
-    'Telekom': 'badge-primary',
-    'Kreditkarte': 'badge-secondary',
-    'Sonstiges': 'badge-ghost'
-  }
-  return classes[category] || 'badge-ghost'
-}
-
-// Data calculations
-const balanceData = computed(() => {
-  const map = new Map()
-  for (const tx of transactions) {
-    const d = tx.booking_date
-    const a = Number(tx.amount)
-    map.set(d, (map.get(d) || 0) + a)
-  }
-  const sorted = Array.from(map.entries()).sort(
-    ([d1], [d2]) => new Date(d1) - new Date(d2),
-  )
-
-  let balance = 1000 // Starting balance
-  const cumulativeValues = sorted.map(([, value]) => {
-    balance += value
-    return balance.toFixed(2)
-  })
-
-  return {
-    labels: sorted.map(([d]) =>
-      new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: 'short' }),
-    ),
-    values: cumulativeValues,
-  }
-})
-
-const dailySpendingData = computed(() => {
-  const map = new Map()
-  for (const tx of transactions) {
-    if (Number(tx.amount) < 0) {
-      const d = tx.booking_date
-      const a = Math.abs(Number(tx.amount))
-      map.set(d, (map.get(d) || 0) + a)
-    }
-  }
-  const sorted = Array.from(map.entries()).sort(
-    ([d1], [d2]) => new Date(d1) - new Date(d2),
-  )
-
-  return {
-    labels: sorted.map(([d]) =>
-      new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: 'short' }),
-    ),
-    values: sorted.map(([, v]) => v.toFixed(2)),
-  }
-})
-
-const categoryData = computed(() => {
-  const categories = new Map()
-
-  for (const tx of transactions) {
-    if (Number(tx.amount) < 0) {
-      const category = getCategoryForTransaction(tx)
-      const amount = Math.abs(Number(tx.amount))
-      categories.set(category, (categories.get(category) || 0) + amount)
-    }
-  }
-
-  return Array.from(categories.entries()).map(([name, value]) => ({
-    name,
-    value: value.toFixed(2)
-  }))
-})
-
-const merchantData = computed(() => {
-  const merchants = new Map()
-
-  for (const tx of transactions) {
-    if (Number(tx.amount) < 0) {
-      const merchant = tx.creditor_name || 'Unbekannt'
-      const amount = Math.abs(Number(tx.amount))
-      merchants.set(merchant, (merchants.get(merchant) || 0) + amount)
-    }
-  }
-
-  const sorted = Array.from(merchants.entries())
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10)
-
-  return {
-    labels: sorted.map(([name]) => name),
-    values: sorted.map(([, value]) => value.toFixed(2))
-  }
-})
-
-// Chart configurations
-const balanceChartOptions = computed(() => ({
-  tooltip: {
-    trigger: 'axis',
-    formatter: (params) => `${params[0].name}<br/>Saldo: €${params[0].value}`
-  },
-  grid: { left: '10%', right: '5%', bottom: '15%', top: '5%' },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: balanceData.value.labels,
-    axisLabel: { rotate: 45 }
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel: { formatter: '€{value}' }
-  },
-  series: [{
-    type: 'line',
-    smooth: true,
-    data: balanceData.value.values,
-    itemStyle: { color: '#3b82f6' },
-    areaStyle: { color: 'rgba(59, 130, 246, 0.1)' }
-  }],
-}))
-
-const dailySpendingChartOptions = computed(() => ({
-  tooltip: {
-    trigger: 'axis',
-    formatter: (params) => `${params[0].name}<br/>Ausgaben: €${params[0].value}`
-  },
-  grid: { left: '10%', right: '5%', bottom: '15%', top: '5%' },
-  xAxis: {
-    type: 'category',
-    data: dailySpendingData.value.labels,
-    axisLabel: { rotate: 45 }
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel: { formatter: '€{value}' }
-  },
-  series: [{
-    type: 'bar',
-    data: dailySpendingData.value.values,
-    itemStyle: { color: '#ef4444' }
-  }],
-}))
-
-const categoryPieChartOptions = computed(() => ({
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b}<br/>€{c} ({d}%)'
-  },
-  legend: {
-    orient: 'vertical',
-    left: 'left',
-    textStyle: { fontSize: 11 }
-  },
-  series: [{
-    type: 'pie',
-    radius: ['35%', '65%'],
-    center: ['60%', '50%'],
-    avoidLabelOverlap: false,
-    itemStyle: {
-      borderRadius: 8,
-      borderColor: '#fff',
-      borderWidth: 2
-    },
-    label: { show: false },
-    emphasis: {
-      label: {
-        show: true,
-        fontSize: 14,
-        fontWeight: 'bold'
-      }
-    },
-    data: categoryData.value
-  }]
-}))
-
-const merchantBarChartOptions = computed(() => ({
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: { type: 'shadow' },
-    formatter: (params) => `${params[0].name}<br/>Gesamt: €${params[0].value}`
-  },
-  grid: {
-    left: '25%',
-    right: '5%',
-    bottom: '5%',
-    top: '5%'
-  },
-  xAxis: {
-    type: 'value',
-    axisLabel: { formatter: '€{value}' }
-  },
-  yAxis: {
-    type: 'category',
-    data: merchantData.value.labels,
-    axisLabel: { fontSize: 10 }
-  },
-  series: [{
-    type: 'bar',
-    data: merchantData.value.values,
-    itemStyle: { color: '#f59e0b' }
-  }]
-}))
 
 const chartReady = ref(false)
 let resizeObserver = null
@@ -406,14 +162,47 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.stat {
-  padding: 1rem;
+/* Smooth transitions for interactive elements */
+.group:hover .bg-base-100 {
+  @apply shadow-lg;
 }
-.stat-title {
-  font-size: 0.875rem;
-  opacity: 0.7;
+
+/* Add a glow effect on hover for luxury theme */
+.group:hover {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 20px -5px theme('colors.primary.DEFAULT');
 }
-.stat-value {
-  margin-top: 0.25rem;
+
+/* Optional: Add a subtle animation to the total balance icon */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .8;
+    transform: scale(1.05);
+  }
+}
+
+.group:hover svg {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Add a golden shimmer effect for the luxury theme */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.bg-gradient-to-br {
+  background-size: 200% 100%;
+  animation: shimmer 8s linear infinite;
 }
 </style>

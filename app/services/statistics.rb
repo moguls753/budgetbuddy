@@ -26,11 +26,11 @@ class Statistics
   private
 
   def spending_in_range(range)
-    TransactionRecord.where(account: @accounts).where(booking_date: range).where("amount < 0").sum(:amount)
+    TransactionRecord.where(account: @accounts).where(booking_date: range).where("amount < 0").sum(:amount).to_f
   end
 
   def income_in_range(range)
-    TransactionRecord.where(account: @accounts).where(booking_date: range).where("amount > 0").sum(:amount)
+    TransactionRecord.where(account: @accounts).where(booking_date: range).where("amount > 0").sum(:amount).to_f
   end
 
   def average_daily_spending
@@ -45,8 +45,6 @@ class Statistics
     average_daily_spending * 365
   end
 
-  # — Durchschnitts-Methoden für Einnahmen —
-
   def average_daily_income
     income_in_range(@period_range).to_f / @period_days
   end
@@ -59,8 +57,6 @@ class Statistics
     average_daily_income * 365
   end
 
-  # — Top-Merchants (Beispiel: nach Ausgaben) —
-
   def top_merchants(limit = 10)
     TransactionRecord
              .where(account: @accounts)
@@ -68,8 +64,8 @@ class Statistics
              .where(booking_date: @period_range)
              .group(:creditor_name)
              .select("creditor_name AS name, SUM(amount) AS spending")
-             .order("spending ASC")  # negativste Summen zuerst
+             .order("spending ASC")
              .limit(limit)
-             .map { |r| { name: r.name, spending: r.spending } }
+             .map { |r| { name: r.name, spending: r.spending.to_f } }
   end
 end

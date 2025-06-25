@@ -22,6 +22,18 @@
       </div>
     </div>
 
+          <!-- <!-- Chart on the right --> -->
+          <!-- <div class="box-border border-1 rounded-lg p-4"> -->
+          <!--   <h4 class="text-sm font-semibold mb-3">Kontostand Verlauf</h4> -->
+          <!--   <div :ref="`balanceContainer-${account.id}`" style="height: 150px;"> -->
+          <!--     <v-chart -->
+          <!--       v-if="chartReady" -->
+          <!--       :option="getBalanceChartOptions(account)" -->
+          <!--       :style="{ width: '100%', height: '100%' }" -->
+          <!--       autoresize -->
+          <!--     /> -->
+          <!--   </div> -->
+          <!-- </div> -->
     <!-- Charts Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Balance Chart -->
