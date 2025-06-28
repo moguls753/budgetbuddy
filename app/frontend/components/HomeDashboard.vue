@@ -5,7 +5,8 @@
       <h2 class="text-2xl font-bold mb-6 text-base-content">Finanzübersicht</h2>
 
       <!-- Total Balance Card -->
-      <div class="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl p-6 border border-primary/20">
+      <div
+        class="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl p-6 border border-primary/20">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm text-base-content/60 mb-1">Gesamtvermögen</p>
@@ -15,7 +16,8 @@
           </div>
           <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
             <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         </div>
@@ -24,68 +26,60 @@
 
     <!-- Accounts Grid -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-      <div
-        v-for="account in accounts"
-        :key="account.id"
-        class="group bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:bg-base-300 hover:scale-[1.02] border border-base-300 hover:border-primary/30"
-      >
+      <div v-for="account in accounts" :key="account.id"
+        class="group bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:bg-base-300 hover:scale-[1.02] border border-base-300 hover:border-primary/30">
         <!-- Account Header -->
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-base-content">{{ account.name }}</h3>
-          <div class="badge badge-sm badge-ghost">{{ account.iban }}</div>
-        </div>
+        <h3 class="text-lg font-semibold text-base-content pb-5">{{ account.name }}</h3>
 
         <!-- Account Balance -->
         <div class="mb-6">
-          <p class="text-sm text-base-content/60 mb-1">Kontostand</p>
           <p class="text-2xl font-bold" :class="balanceFor(account.iban) >= 0 ? 'text-success' : 'text-error'">
-            €{{ balanceFor(account.iban).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            €{{ balanceFor(account.iban).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            }}
           </p>
         </div>
 
         <!-- Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <!-- Recent Transactions -->
-          <div class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
+          <div
+            class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
             <div class="flex items-center justify-between mb-3">
               <h4 class="text-sm font-semibold text-base-content">Letzte Transaktionen</h4>
               <svg class="w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
 
             <div class="space-y-2">
-              <div v-if="recentTransactionsFor(account.id).length === 0" class="text-center py-4 text-base-content/40 text-sm">
+              <div v-if="recentTransactionsFor(account.id).length === 0"
+                class="text-center py-4 text-base-content/40 text-sm">
                 Keine Transaktionen
               </div>
-              <div
-                v-for="tx in recentTransactionsFor(account.id)"
-                :key="tx.id"
-                class="flex items-center justify-between py-2 border-b border-base-300 last:border-0"
-              >
+              <div v-for="tx in recentTransactionsFor(account.id)" :key="tx.id"
+                class="flex items-center justify-between py-2 border-b border-base-300 last:border-0">
                 <div class="flex-1 min-w-0">
                   <p class="text-xs text-base-content/60">{{ formatDate(tx.booking_date) }}</p>
                   <p class="text-sm font-medium truncate">{{ tx.creditor_name || 'Unbekannt' }}</p>
                 </div>
                 <p class="text-sm font-mono ml-2" :class="Number(tx.amount) < 0 ? 'text-error' : 'text-success'">
-                  {{ Number(tx.amount) < 0 ? '-' : '+' }}€{{ Math.abs(Number(tx.amount)).toFixed(2) }}
-                </p>
+                  {{ Number(tx.amount) < 0 ? '-' : '+' }}€{{ Math.abs(Number(tx.amount)).toFixed(2) }} </p>
               </div>
             </div>
           </div>
 
           <!-- Quick Stats -->
-          <div class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
+          <div
+            class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
             <div class="flex items-center justify-between mb-3">
               <h4 class="text-sm font-semibold text-base-content">Übersicht</h4>
               <svg class="w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <AccountQuickStats
-              :account="account"
-              :transactions="transactions[account.id] || []"
-            />
+            <AccountQuickStats :account="account" :transactions="transactions[account.id] || []" />
           </div>
         </div>
       </div>
@@ -177,10 +171,13 @@ onBeforeUnmount(() => {
 
 /* Optional: Add a subtle animation to the total balance icon */
 @keyframes pulse-slow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: .8;
     transform: scale(1.05);
@@ -196,6 +193,7 @@ onBeforeUnmount(() => {
   0% {
     background-position: -200% center;
   }
+
   100% {
     background-position: 200% center;
   }
