@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_21_142221) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_08_200047) do
   create_table "accounts", force: :cascade do |t|
     t.integer "bank_connection_id", null: false
     t.string "account_id"
@@ -58,6 +58,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_142221) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_bank_connections_on_user_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "name"], name: "index_categories_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
   create_table "go_cardless_tokens", force: :cascade do |t|
@@ -112,6 +121,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_142221) do
   add_foreign_key "accounts", "bank_connections"
   add_foreign_key "agreements", "bank_connections"
   add_foreign_key "bank_connections", "users"
+  add_foreign_key "categories", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "transaction_records", "accounts"
 end

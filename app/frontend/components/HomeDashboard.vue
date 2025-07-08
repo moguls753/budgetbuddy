@@ -5,8 +5,7 @@
       <h2 class="text-2xl font-bold mb-6 text-base-content">Finanzübersicht</h2>
 
       <!-- Total Balance Card -->
-      <div
-        class="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl p-6 border border-primary/20">
+      <div class="from-primary/10 via-primary/5 to-transparent rounded-2xl p-6 border border-primary/20">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm text-base-content/60 mb-1">Gesamtvermögen</p>
@@ -27,7 +26,7 @@
     <!-- Accounts Grid -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <div v-for="account in accounts" :key="account.id"
-        class="group bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:bg-base-300 hover:scale-[1.02] border border-base-300 hover:border-primary/30">
+        class="group bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:bg-base-300 hover:scale-[1.005] border border-base-300 hover:border-primary/30">
         <!-- Account Header -->
         <h3 class="text-lg font-semibold text-base-content pb-5">{{ account.name }}</h3>
 
@@ -92,7 +91,7 @@ import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import AccountQuickStats from './AccountQuickStats.vue'
 
 const props = defineProps({
-  transactions: { type: Array, required: true },
+  transactions: { type: Object, required: true },
   accounts: { type: Array, required: true },
   stats: { type: Object, required: true },
 })
@@ -158,7 +157,7 @@ onBeforeUnmount(() => {
 <style scoped>
 /* Smooth transitions for interactive elements */
 .group:hover .bg-base-100 {
-  @apply shadow-lg;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Add a glow effect on hover for luxury theme */
@@ -166,41 +165,6 @@ onBeforeUnmount(() => {
   box-shadow:
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 20px -5px theme('colors.primary.DEFAULT');
-}
-
-/* Optional: Add a subtle animation to the total balance icon */
-@keyframes pulse-slow {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: .8;
-    transform: scale(1.05);
-  }
-}
-
-.group:hover svg {
-  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Add a golden shimmer effect for the luxury theme */
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-
-  100% {
-    background-position: 200% center;
-  }
-}
-
-.bg-gradient-to-br {
-  background-size: 200% 100%;
-  animation: shimmer 8s linear infinite;
+    0 0 20px -5px hsl(var(--p));
 }
 </style>

@@ -20,14 +20,14 @@
             class="flex items-center justify-between w-full px-4 py-2 text-left transition-colors duration-300 transform rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
             onclick="this.nextElementSibling.classList.toggle('hidden')"
           >
-            <span class="font-medium"><%= account.name %></span>
+            <span class="font-medium"><%= account.name.capitalize %></span>
             <svg class="w-4 h-4 transform transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
           <ul class="ml-6 mt-1 space-y-1 hidden">
             <li>
-              <a href="#" class="block px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+              <a href="<%= account_path(account) %>" class="block px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
                 Overview
               </a>
             </li>

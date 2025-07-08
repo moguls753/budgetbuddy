@@ -20,6 +20,33 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :bank_connections
   has_many :accounts, through: :bank_connections
+  has_many :categories, dependent: :destroy
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
+
+  def create_default_categories!
+    default_categories = [
+      "Lebensmittel & Getränke",
+      "Restaurants & Cafés",
+      "Transport & Verkehr",
+      "Shopping & Kleidung",
+      "Unterhaltung",
+      "Wohnen & Miete",
+      "Strom & Energie",
+      "Internet",
+      "Telefon",
+      "Gesundheit & Apotheke",
+      "Bildung",
+      "Reisen",
+      "Einkommen & Gehalt",
+      "Überweisungen",
+      "Sparen",
+      "Bargeld & ATM",
+      "Sonstiges"
+    ]
+
+    default_categories.each do |category_name|
+      categories.find_or_create_by(name: category_name)
+    end
+  end
 end

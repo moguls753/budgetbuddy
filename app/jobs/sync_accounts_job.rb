@@ -33,9 +33,12 @@ class SyncAccountsJob < ApplicationJob
       update_attrs = {}
 
       if account_data[:body].present?
-        update_attrs[:iban] = account_data[:body]["iban"]
-        update_attrs[:name] = account_data[:body]["ownerName"]
-        update_attrs[:status] = account_data[:body]["status"]
+        body = account_data[:body]
+        update_attrs.merge!({
+          iban: body["iban"],
+          name: body["owner_name"],
+          status: body["status"]
+        }.compact_blank)
       end
 
       if balances[:body].present?

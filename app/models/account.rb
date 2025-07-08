@@ -57,7 +57,7 @@ class Account < ApplicationRecord
       iban:,
       interim_available: interim_available.to_f,
       interim_booked: interim_booked.to_f,
-      name:,
+      name: name.capitalize,
       status:,
       transactions_ratelimit:,
       transactions_ratelimit_remaining:,

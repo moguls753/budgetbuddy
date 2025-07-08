@@ -36,4 +36,12 @@ class TransactionRecord < ApplicationRecord
   def to_frontend_json
     as_json(except: [ :created_at, :updated_at ])
   end
+
+  def categorize_with_ai!
+    return if remittance.blank? || category.present?
+
+    user = account.bank_connection.user
+    new_category = GeminiCategorizer.categorize(remittance, user: user)
+    update!(category: new_category) if new_category
+  end
 end

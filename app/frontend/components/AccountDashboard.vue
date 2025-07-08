@@ -146,13 +146,19 @@ use([
   LegendComponent,
 ])
 
-const rootEl = document.getElementById('vue-root')
-const raw_transactions = rootEl?.dataset.transactions || '[]'
-const transactions = ref(JSON.parse(raw_transactions))
-const raw_balances = rootEl?.dataset.balances || '[]'
-const balances = ref(JSON.parse(raw_balances))
-const raw_details = rootEl?.dataset.details || '[]'
-const details = ref(JSON.parse(raw_details))
+const props = defineProps({
+  transactions: {
+    type: Array,
+    default: () => []
+  },
+  account: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+const transactions = ref(props.transactions)
+const account = ref(props.account)
 
 // Summary calculations
 // const currentBalance = computed(() => {
@@ -161,29 +167,32 @@ const details = ref(JSON.parse(raw_details))
 //   return values.length > 0 ? values[values.length - 1] : '0.00'
 // })
 
-const currentBalance = balances.value[0].interim_available
+const currentBalance = account.value.interim_available
 
-const totalSpending = computed(() => {
-  const total = transactions.value
-    .filter(tx => Number(tx.amount) < 0)
-    .reduce((sum, tx) => sum + Math.abs(Number(tx.amount)), 0)
-  return total.toFixed(2)
-})
+const totalSpending = transactions.value
+  .filter(tx => Number(tx.amount) < 0)
+  .reduce((sum, tx) => sum + Math.abs(Number(tx.amount)), 0)
+  .toFixed(2)
 
-const avgDailySpending = computed(() => {
-  const spending = dailySpendingData.value.values
-  if (spending.length === 0) return '0.00'
-  const sum = spending.reduce((acc, val) => acc + parseFloat(val), 0)
-  return (sum / spending.length).toFixed(2)
-})
+// Calculate average daily spending directly
+const dailySpendingMap = new Map()
+for (const tx of transactions.value) {
+  if (Number(tx.amount) < 0) {
+    const d = tx.booking_date
+    const a = Math.abs(Number(tx.amount))
+    dailySpendingMap.set(d, (dailySpendingMap.get(d) || 0) + a)
+  }
+}
+const dailySpendingValues = Array.from(dailySpendingMap.values())
+const avgDailySpending = dailySpendingValues.length === 0 
+  ? '0.00' 
+  : (dailySpendingValues.reduce((sum, val) => sum + val, 0) / dailySpendingValues.length).toFixed(2)
 
-const transactionCount = computed(() => transactions.value.length)
+const transactionCount = transactions.value.length
 
-const recentTransactions = computed(() => {
-  return [...transactions.value]
-    .sort((a, b) => new Date(b.booking_date) - new Date(a.booking_date))
-    .slice(0, 5)
-})
+const recentTransactions = [...transactions.value]
+  .sort((a, b) => new Date(b.booking_date) - new Date(a.booking_date))
+  .slice(0, 5)
 
 // Helper functions
 const formatDate = (date) => {
@@ -195,25 +204,27 @@ const formatDate = (date) => {
 }
 
 const getCategoryForTransaction = (tx) => {
-  const merchant = tx.creditor_name || ''
-
-  if (merchant.match(/REWE|EDEKA|IHR BAECKER/i)) return 'Lebensmittel'
-  if (merchant.match(/Pizzeria|Restaurant/i)) return 'Restaurants'
-  if (merchant.match(/APOTHEKE/i)) return 'Gesundheit'
-  if (merchant.match(/Drillisch/i)) return 'Telekom'
-  if (merchant.match(/BARCLAYS/i)) return 'Kreditkarte'
-  return 'Sonstiges'
+  return tx.category || 'Uncategorized'
 }
 
 const getCategoryBadgeClass = (tx) => {
   const category = getCategoryForTransaction(tx)
   const classes = {
-    'Lebensmittel': 'badge-success',
-    'Restaurants': 'badge-warning',
-    'Gesundheit': 'badge-info',
-    'Telekom': 'badge-primary',
-    'Kreditkarte': 'badge-secondary',
-    'Sonstiges': 'badge-ghost'
+    'Food & Dining': 'badge-warning',
+    'Groceries': 'badge-success', 
+    'Transportation': 'badge-info',
+    'Shopping': 'badge-primary',
+    'Entertainment': 'badge-secondary',
+    'Bills & Utilities': 'badge-accent',
+    'Healthcare': 'badge-info',
+    'Education': 'badge-primary',
+    'Travel': 'badge-warning',
+    'Income': 'badge-success',
+    'Transfers': 'badge-neutral',
+    'ATM/Cash': 'badge-ghost',
+    'Fees & Charges': 'badge-error',
+    'Other': 'badge-ghost',
+    'Uncategorized': 'badge-ghost'
   }
   return classes[category] || 'badge-ghost'
 }
@@ -230,11 +241,19 @@ const balanceData = computed(() => {
     ([d1], [d2]) => new Date(d1) - new Date(d2),
   )
 
-  let balance = 1000 // Starting balance
-  const cumulativeValues = sorted.map(([, value]) => {
-    balance += value
-    return balance.toFixed(2)
-  })
+  // Start with current balance and work backwards
+  let balance = Number(currentBalance)
+  const cumulativeValues = []
+  
+  // Calculate backwards to get starting balance
+  const totalTransactionAmount = sorted.reduce((sum, [, value]) => sum + value, 0)
+  let runningBalance = balance - totalTransactionAmount
+  
+  // Now calculate forward from the calculated starting balance
+  for (const [, value] of sorted) {
+    runningBalance += value
+    cumulativeValues.push(runningBalance.toFixed(2))
+  }
 
   return {
     labels: sorted.map(([d]) =>
