@@ -17,16 +17,12 @@ class CategorizeTransactionsJob < ApplicationJob
     uncategorized_transactions.find_each.with_index do |transaction, index|
       begin
         transaction.categorize_with_ai!
-        Rails.logger.info "Categorized transaction #{transaction.id}: #{transaction.category}"
+        Rails.logger.info "Categorized transaction #{transaction.remittance}: #{transaction.category}"
 
-        # Rate limiting: sleep 12 seconds between requests (5 requests per minute limit)
-        # Skip sleep after the last transaction
-        if index < uncategorized_transactions.count - 1
-          Rails.logger.info "Waiting 4 seconds before next categorization..."
-          sleep(4)
-        end
+        Rails.logger.info "Waiting 2 seconds before next categorization..."
+        sleep(2)
       rescue => e
-        Rails.logger.error "Failed to categorize transaction #{transaction.id}: #{e.message}"
+        Rails.logger.error "Failed to categorize transaction #{transaction.remittance}: #{e.message}"
       end
     end
   end

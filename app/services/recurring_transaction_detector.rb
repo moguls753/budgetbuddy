@@ -76,7 +76,7 @@ class RecurringTransactionDetector
     require "net/http"
     require "json"
 
-    uri = URI("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=#{@api_key}")
+    uri = URI("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=#{@api_key}")
 
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
