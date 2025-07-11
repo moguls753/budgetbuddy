@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_08_200047) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_133143) do
   create_table "accounts", force: :cascade do |t|
     t.integer "bank_connection_id", null: false
     t.string "account_id"
@@ -57,6 +57,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_200047) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "provider", default: "gocardless"
+    t.text "credentials_encrypted"
+    t.datetime "last_scraped_at"
+    t.text "scraper_config"
     t.index ["user_id"], name: "index_bank_connections_on_user_id"
   end
 
