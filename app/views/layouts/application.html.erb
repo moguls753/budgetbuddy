@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html data-theme="luxury">
+<html>
   <head>
-    <title><%= content_for(:title) || "Budgetbuddy" %></title>
+    <title><%= content_for(:title) || "BudgetBuddy" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,23 +17,21 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <%# Google Fonts - Financial Editorial Brutalism %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= vite_client_tag %>
     <%= vite_javascript_tag 'application' %>
-    <!--
-      If using a TypeScript entrypoint file:
-        vite_typescript_tag 'application'
-
-      If using a .jsx or .tsx entrypoint, add the extension:
-        vite_javascript_tag 'application.jsx'
-
-      Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
-    -->
 
   </head>
 
-  <body class="flex min-h-screen">
-    <%= render "layouts/sidebar" %>
+  <body class="flex min-h-screen bg-cream">
+    <% if authenticated? %>
+      <%= render "layouts/sidebar" %>
+    <% end %>
     <main class="flex-1 overflow-auto">
       <%= yield %>
     </main>

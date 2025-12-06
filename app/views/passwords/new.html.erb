@@ -1,8 +1,44 @@
-<h1>Forgot your password?</h1>
+<div class="min-h-screen flex items-center justify-center bg-cream p-8">
+  <div class="w-full max-w-md">
+    <!-- Dramatic Header -->
+    <div class="mb-12 text-center">
+      <h1 class="font-display text-7xl text-near-black mb-3 tracking-tight leading-none">Budget<br/>Buddy</h1>
+      <p class="font-mono text-xs text-gold uppercase tracking-widest">Financial Dashboard</p>
+    </div>
 
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+    <!-- Flash Messages -->
+    <% if flash[:alert] %>
+      <div class="mb-6 p-4 border-2 border-expense bg-expense/10">
+        <p class="font-sans text-sm text-expense font-semibold"><%= flash[:alert] %></p>
+      </div>
+    <% end %>
 
-<%= form_with url: passwords_path do |form| %>
-  <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
-  <%= form.submit "Email reset instructions" %>
-<% end %>
+    <!-- Forgot Password Form -->
+    <div class="bg-white border-4 border-near-black p-8 ink-bleed">
+      <h2 class="font-display text-3xl text-near-black mb-4 border-b-2 border-salmon pb-4">Forgot Your<br/>Password?</h2>
+      <p class="font-sans text-sm text-near-black/70 mb-8">Enter your email address and we'll send you instructions to reset your password.</p>
+
+      <%= form_with url: passwords_path, class: "space-y-6" do |form| %>
+        <div>
+          <label class="block font-mono text-xs uppercase tracking-widest text-near-black/70 mb-2">Email Address</label>
+          <%= form.email_field :email_address,
+            required: true,
+            autofocus: true,
+            autocomplete: "username",
+            placeholder: "your@email.com",
+            value: params[:email_address],
+            class: "w-full px-4 py-3 border-2 border-near-black font-sans text-near-black placeholder:text-near-black/40 focus:outline-none focus:border-salmon transition-colors" %>
+        </div>
+
+        <%= form.submit "Email Reset Instructions",
+          class: "w-full bg-charcoal text-cream font-mono uppercase tracking-widest text-sm font-bold py-4 px-6 border-4 border-near-black hover:bg-salmon hover:text-near-black transition-all duration-300 cursor-pointer" %>
+      <% end %>
+
+      <div class="mt-6 text-center border-t-2 border-near-black/10 pt-6">
+        <%= link_to "Back to sign in",
+          new_session_path,
+          class: "font-mono text-sm text-gold hover:text-salmon transition-colors uppercase tracking-wide" %>
+      </div>
+    </div>
+  </div>
+</div>

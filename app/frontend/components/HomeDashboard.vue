@@ -1,84 +1,74 @@
 <template>
-  <div class="bg-base-100 rounded-2xl p-6 shadow-lg w-full">
-    <!-- Header Section with Total Balance -->
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold mb-6 text-base-content">Finanzübersicht</h2>
-
-      <!-- Total Balance Card -->
-      <div class="from-primary/10 via-primary/5 to-transparent rounded-2xl p-6 border border-primary/20">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-base-content/60 mb-1">Gesamtvermögen</p>
-            <p class="text-3xl font-bold" :class="currentTotalBalance >= 0 ? 'text-success' : 'text-error'">
-              €{{ currentTotalBalance.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
-            </p>
-          </div>
-          <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
+  <div class="min-h-screen p-12 animate-fade-in">
+    <!-- Dramatic Header with Oversized Typography -->
+    <div class="mb-16 border-b-4 border-salmon pb-8">
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <h1 class="font-display text-7xl text-near-black mb-2 tracking-tight leading-none">Finanz<br/>Übersicht</h1>
+          <p class="font-mono text-xs text-gold uppercase tracking-widest">Portfolio Dashboard</p>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-xs text-near-black/60 uppercase tracking-wide mb-2">Gesamtvermögen</p>
+          <p class="font-mono text-6xl font-bold tracking-tight"
+             :class="currentTotalBalance >= 0 ? 'text-income' : 'text-expense'">
+            €{{ currentTotalBalance.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- Accounts Grid -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-      <div v-for="account in accounts" :key="account.id"
-        class="group bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:bg-base-300 hover:scale-[1.005] border border-base-300 hover:border-primary/30">
-        <!-- Account Header -->
-        <h3 class="text-lg font-semibold text-base-content pb-5">{{ account.name }}</h3>
+    <!-- Asymmetric Accounts Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <div v-for="(account, index) in accounts" :key="account.id"
+        :class="`animate-slide-up stagger-${Math.min(index + 1, 6)}`"
+        class="card-hover bg-white border-4 border-near-black shadow-lg overflow-hidden">
 
-        <!-- Account Balance -->
-        <div class="mb-6">
-          <p class="text-2xl font-bold" :class="balanceFor(account.iban) >= 0 ? 'text-success' : 'text-error'">
-            €{{ balanceFor(account.iban).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            }}
-          </p>
+        <!-- Account Header with Diagonal Accent -->
+        <div class="bg-gradient-to-br from-salmon-light to-white p-8 border-b-4 border-near-black relative">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-gold opacity-10 rounded-full -mr-16 -mt-16"></div>
+          <h2 class="font-display text-3xl text-near-black mb-2 relative z-10">{{ account.name }}</h2>
+          <p class="font-mono text-xs uppercase tracking-widest text-near-black/60 relative z-10">Account Balance</p>
+
+          <!-- Oversized Balance Number -->
+          <div class="mt-6 relative z-10">
+            <p class="font-mono text-5xl font-bold tracking-tight"
+               :class="balanceFor(account.iban) >= 0 ? 'text-income' : 'text-expense'">
+              €{{ balanceFor(account.iban).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            </p>
+          </div>
         </div>
 
-        <!-- Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <!-- Recent Transactions -->
-          <div
-            class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-semibold text-base-content">Letzte Transaktionen</h4>
-              <svg class="w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
+        <!-- Content Grid with Editorial Layout -->
+        <div class="p-8 bg-cream">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Recent Transactions with Bold Typography -->
+            <div class="border-l-4 border-salmon pl-6">
+              <h3 class="font-display text-xl text-near-black mb-4">Letzte<br/>Transaktionen</h3>
 
-            <div class="space-y-2">
-              <div v-if="recentTransactionsFor(account.id).length === 0"
-                class="text-center py-4 text-base-content/40 text-sm">
-                Keine Transaktionen
-              </div>
-              <div v-for="tx in recentTransactionsFor(account.id)" :key="tx.id"
-                class="flex items-center justify-between py-2 border-b border-base-300 last:border-0">
-                <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60">{{ formatDate(tx.booking_date) }}</p>
-                  <p class="text-sm font-medium truncate">{{ tx.creditor_name || 'Unbekannt' }}</p>
+              <div class="space-y-3">
+                <div v-if="recentTransactionsFor(account.id).length === 0"
+                  class="text-center py-8 text-near-black/40 font-mono text-sm">
+                  Keine Transaktionen
                 </div>
-                <p class="text-sm font-mono ml-2" :class="Number(tx.amount) < 0 ? 'text-error' : 'text-success'">
-                  {{ Number(tx.amount) < 0 ? '-' : '+' }}€{{ Math.abs(Number(tx.amount)).toFixed(2) }} </p>
+                <div v-for="tx in recentTransactionsFor(account.id)" :key="tx.id"
+                  class="pb-3 border-b border-near-black/10 last:border-0">
+                  <div class="flex items-start justify-between mb-1">
+                    <p class="font-mono text-xs text-near-black/50 uppercase">{{ formatDate(tx.booking_date) }}</p>
+                    <span class="font-mono text-sm font-bold"
+                          :class="Number(tx.amount) < 0 ? 'badge-expense' : 'badge-income'">
+                      {{ Number(tx.amount) < 0 ? '-' : '+' }}€{{ Math.abs(Number(tx.amount)).toFixed(2) }}
+                    </span>
+                  </div>
+                  <p class="font-sans text-sm font-medium text-near-black truncate">{{ tx.creditor_name || 'Unbekannt' }}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Quick Stats -->
-          <div
-            class="bg-base-100 rounded-xl p-4 border border-base-300 group-hover:border-primary/20 transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-semibold text-base-content">Übersicht</h4>
-              <svg class="w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+            <!-- Quick Stats -->
+            <div class="bg-white border-2 border-near-black p-6">
+              <h3 class="font-display text-xl text-near-black mb-4 border-b-2 border-gold pb-2">Übersicht</h3>
+              <AccountQuickStats :account="account" :transactions="transactions[account.id] || []" />
             </div>
-            <AccountQuickStats :account="account" :transactions="transactions[account.id] || []" />
           </div>
         </div>
       </div>
@@ -155,16 +145,24 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* Smooth transitions for interactive elements */
-.group:hover .bg-base-100 {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+/* Financial Editorial Brutalism - Component Styles */
+
+/* Ensure stagger animations work */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Add a glow effect on hover for luxury theme */
-.group:hover {
+/* Enhanced card hover with ink bleed effect */
+.card-hover:hover {
   box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 20px -5px hsl(var(--p));
+    0 25px 30px -10px rgba(0, 0, 0, 0.2),
+    0 0 40px rgba(255, 155, 133, 0.15);
 }
 </style>

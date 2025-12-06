@@ -1,35 +1,33 @@
 <template>
-  <div class="w-full">
-    <!-- Trend Section -->
-    <div class="flex items-center justify-center mb-4">
-      <div class="flex items-center space-x-2">
-        <span class="text-sm opacity-70">3W Trend</span>
-        <div class="flex items-center">
-          <component
-            :is="trendIcon"
-            :class="trendColorClass"
-            class="w-5 h-5"
-          />
-          <span class="text-sm ml-1 font-semibold" :class="trendColorClass">
-            {{ trendDirection }}{{ Math.abs(trendPercentage).toFixed(1) }}%
-          </span>
-        </div>
+  <div class="w-full space-y-4">
+    <!-- Bold Trend Display -->
+    <div class="bg-salmon-light border-2 border-salmon p-4 text-center">
+      <p class="font-mono text-xs uppercase tracking-widest text-near-black/60 mb-2">3-Wochen Trend</p>
+      <div class="flex items-center justify-center space-x-2">
+        <component
+          :is="trendIcon"
+          :class="trendColorClass"
+          class="w-6 h-6"
+        />
+        <span class="font-mono text-3xl font-bold" :class="trendColorClass">
+          {{ trendDirection }}{{ Math.abs(trendPercentage).toFixed(1) }}%
+        </span>
       </div>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="space-y-2">
-      <div class="flex justify-between items-center">
-        <span class="text-xs opacity-70">Ausgaben (30T)</span>
-        <span class="text-xs font-mono text-error">-€{{ monthlySpending }}</span>
+    <!-- Data Grid with Bold Numbers -->
+    <div class="space-y-3">
+      <div class="border-b-2 border-near-black/10 pb-2">
+        <p class="font-mono text-xs uppercase tracking-wide text-near-black/50 mb-1">Ausgaben (30T)</p>
+        <p class="font-mono text-2xl font-bold text-expense">-€{{ monthlySpending }}</p>
       </div>
-      <div class="flex justify-between items-center">
-        <span class="text-xs opacity-70">Ø Transaktion</span>
-        <span class="text-xs font-mono">€{{ averageTransaction }}</span>
+      <div class="border-b-2 border-near-black/10 pb-2">
+        <p class="font-mono text-xs uppercase tracking-wide text-near-black/50 mb-1">Ø Transaktion</p>
+        <p class="font-mono text-2xl font-bold text-near-black">€{{ averageTransaction }}</p>
       </div>
-      <div class="flex justify-between items-center">
-        <span class="text-xs opacity-70">Letzte Aktivität</span>
-        <span class="text-xs">{{ lastActivityText }}</span>
+      <div class="pb-2">
+        <p class="font-mono text-xs uppercase tracking-wide text-near-black/50 mb-1">Letzte Aktivität</p>
+        <p class="font-sans text-lg font-semibold text-gold">{{ lastActivityText }}</p>
       </div>
     </div>
   </div>
@@ -112,9 +110,9 @@ const trendIcon = computed(() => {
 
 const trendColorClass = computed(() => {
   switch (trendData.value.direction) {
-    case 'up': return 'text-success'
-    case 'down': return 'text-error'
-    default: return 'text-warning'
+    case 'up': return 'text-income'
+    case 'down': return 'text-expense'
+    default: return 'text-gold'
   }
 })
 

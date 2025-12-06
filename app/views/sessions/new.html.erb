@@ -1,11 +1,58 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+<div class="min-h-screen flex items-center justify-center bg-cream p-8">
+  <div class="w-full max-w-md">
+    <!-- Dramatic Header -->
+    <div class="mb-12 text-center">
+      <h1 class="font-display text-7xl text-near-black mb-3 tracking-tight leading-none">Budget<br/>Buddy</h1>
+      <p class="font-mono text-xs text-gold uppercase tracking-widest">Financial Dashboard</p>
+    </div>
 
-<%= form_with url: session_path do |form| %>
-  <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
-  <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
-  <%= form.submit "Sign in" %>
-<% end %>
-<br>
+    <!-- Flash Messages -->
+    <% if flash[:alert] %>
+      <div class="mb-6 p-4 border-2 border-expense bg-expense/10">
+        <p class="font-sans text-sm text-expense font-semibold"><%= flash[:alert] %></p>
+      </div>
+    <% end %>
+    <% if flash[:notice] %>
+      <div class="mb-6 p-4 border-2 border-income bg-income/10">
+        <p class="font-sans text-sm text-income font-semibold"><%= flash[:notice] %></p>
+      </div>
+    <% end %>
 
-<%= link_to "Forgot password?", new_password_path %>
+    <!-- Sign In Form -->
+    <div class="bg-white border-4 border-near-black p-8 ink-bleed">
+      <h2 class="font-display text-3xl text-near-black mb-8 border-b-2 border-salmon pb-4">Sign In</h2>
+
+      <%= form_with url: session_path, class: "space-y-6" do |form| %>
+        <div>
+          <label class="block font-mono text-xs uppercase tracking-widest text-near-black/70 mb-2">Email Address</label>
+          <%= form.email_field :email_address,
+            required: true,
+            autofocus: true,
+            autocomplete: "username",
+            placeholder: "your@email.com",
+            value: params[:email_address],
+            class: "w-full px-4 py-3 border-2 border-near-black font-sans text-near-black placeholder:text-near-black/40 focus:outline-none focus:border-salmon transition-colors" %>
+        </div>
+
+        <div>
+          <label class="block font-mono text-xs uppercase tracking-widest text-near-black/70 mb-2">Password</label>
+          <%= form.password_field :password,
+            required: true,
+            autocomplete: "current-password",
+            placeholder: "Enter your password",
+            maxlength: 72,
+            class: "w-full px-4 py-3 border-2 border-near-black font-sans text-near-black placeholder:text-near-black/40 focus:outline-none focus:border-salmon transition-colors" %>
+        </div>
+
+        <%= form.submit "Sign In",
+          class: "w-full bg-charcoal text-cream font-mono uppercase tracking-widest text-sm font-bold py-4 px-6 border-4 border-near-black hover:bg-salmon hover:text-near-black transition-all duration-300 cursor-pointer" %>
+      <% end %>
+
+      <div class="mt-6 text-center border-t-2 border-near-black/10 pt-6">
+        <%= link_to "Forgot password?",
+          new_password_path,
+          class: "font-mono text-sm text-gold hover:text-salmon transition-colors uppercase tracking-wide" %>
+      </div>
+    </div>
+  </div>
+</div>
