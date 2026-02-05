@@ -1,46 +1,54 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import LoginPage from './LoginPage'
+import Dashboard from './Dashboard'
+import { api } from '../lib/api'
 
-function App() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+type User = { id: number; email_address: string } | null
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+export default function App() {
+  const [user, setUser] = useState<User>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-    const response = await fetch("/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email_address: email, password: password }),
-    })
-
-    if (response.ok) {
-      const data = await response.json()
-      console.log("Logged in!", data)
-    } else {
-      console.log("Login failed")
+  // Check if user is already logged in on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await api('/me')
+        if (response.ok) {
+          const userData = await response.json()
+          setUser(userData)
+        }
+      } catch {
+        // Not logged in, that's fine
+      } finally {
+        setIsLoading(false)
+      }
     }
+
+    checkAuth()
+  }, [])
+
+  // Show loading while checking auth (prevents flash of login page)
+  if (isLoading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--color-surface)' }}
+      >
+        <div
+          className="text-sm"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          Loading...
+        </div>
+      </div>
+    )
   }
 
-  return (
-    <div>
-      <h1>BudgetBuddy</h1>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Log in</button>
-      </form>
-    </div>
-  )
-}
+  // Show login or dashboard based on auth state
+  if (!user) {
+    return <LoginPage onLoginSuccess={setUser} />
+  }
 
-export default App
+  return <Dashboard user={user} onLogout={() => setUser(null)} />
+}
