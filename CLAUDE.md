@@ -10,19 +10,21 @@ The old Vue 3 + Rails app lives on the `legacy` branch. Services like `GoCardles
 
 ## Tech Stack
 
-- **Backend:** Rails 8 API-only (Ruby 3.3+)
-- **Frontend:** React (TypeScript) with Vite, Tailwind CSS, DaisyUI
+- **Backend:** Rails 8 (Ruby 3.3+)
+- **Frontend:** React (TypeScript) via `vite_rails`, Tailwind CSS, DaisyUI
 - **Database:** SQLite3
-- **Auth:** Rails 8 session-based authentication (cookie-based, httponly)
+- **Auth:** Rails 8 session-based authentication (`bin/rails generate authentication`)
 - **Background Jobs:** Solid Queue
-- **Monorepo:** Rails at root, React in `frontend/`
+- **Build:** Vite integrated via `vite_rails` gem — one `package.json` at root
 
 ## Architecture
 
-- Rails serves JSON API endpoints under `/api/v1/`
-- Auth endpoints at root: `/session`, `/user`, `/me`
-- React SPA handles all UI, routing, and state
-- Vite dev server proxies API requests to Rails in development
+- Rails full app with React components mounted in views via `vite_rails`
+- React code lives in `app/javascript/` (Rails convention)
+- Controllers use `respond_to` for both JSON (React) and HTML formats
+- Auth endpoints: `/session`, `/user`, `/me`
+- API endpoints under `/api/v1/`
+- One server in development: `bin/dev` runs Rails + Vite together
 
 ## Testing
 
@@ -44,7 +46,7 @@ Tests are written with **RSpec**, using `factory_bot_rails` and `faker`.
 - English is the default locale
 - German (`de`) as second locale
 - Rails: `config/locales/{en,de}.yml`
-- React: `frontend/src/locales/{en,de}.json`
+- React: translation files in `app/javascript/locales/`
 
 ## Code Style
 
@@ -58,8 +60,7 @@ Tests are written with **RSpec**, using `factory_bot_rails` and `faker`.
 ## Key Commands
 
 ```
-bin/rails server                  # Rails API on :3000
-cd frontend && npm run dev        # React dev server on :5173
+bin/dev                           # Runs Rails + Vite via Procfile.dev
+bin/rails server                  # Rails only on :3000
 bundle exec rspec                 # Run tests
-bin/dev                           # Runs both via Procfile.dev
 ```
