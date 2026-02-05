@@ -26,20 +26,20 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     >
       {/* Header */}
       <header
-        className="border-b-2 px-6 py-4 flex items-center justify-between"
+        className="border-b-2 px-6 py-3 flex items-center justify-between"
         style={{
           backgroundColor: 'var(--color-surface-raised)',
           borderColor: 'var(--color-border)',
         }}
       >
         <h1
-          className="text-xl font-bold"
+          className="text-lg font-bold"
           style={{ color: 'var(--color-text)' }}
         >
           BudgetBuddy
         </h1>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <span
             className="text-sm hidden sm:inline"
             style={{ color: 'var(--color-text-muted)' }}
@@ -47,7 +47,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
             {user.email_address}
           </span>
           <ThemeToggle />
-          <button onClick={handleLogout} className="btn btn-ghost text-sm py-2">
+          <button onClick={handleLogout} className="btn-icon">
             Sign out
           </button>
         </div>
