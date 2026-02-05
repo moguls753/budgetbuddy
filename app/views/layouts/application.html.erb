@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html data-theme="luxury">
+<html>
   <head>
     <title><%= content_for(:title) || "Budgetbuddy" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Budgetbuddy">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -18,26 +19,11 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= vite_client_tag %>
-    <%= vite_javascript_tag 'application' %>
-    <!--
-      If using a TypeScript entrypoint file:
-        vite_typescript_tag 'application'
-
-      If using a .jsx or .tsx entrypoint, add the extension:
-        vite_javascript_tag 'application.jsx'
-
-      Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
-    -->
-
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
 
-  <body class="flex min-h-screen">
-    <% if authenticated? %>
-      <%= render "layouts/sidebar" %>
-    <% end %>
-    <main class="flex-1 overflow-auto">
-      <%= yield %>
-    </main>
+  <body>
+    <%= yield %>
   </body>
 </html>
