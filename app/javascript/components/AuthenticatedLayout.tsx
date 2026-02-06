@@ -70,9 +70,9 @@ export default function AuthenticatedLayout({ user, onLogout }: AuthenticatedLay
   const ActivePage = pages[currentView]
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex overflow-hidden">
       {/* Desktop sidebar — always visible at lg+, collapsible */}
-      <aside className="hidden lg:flex flex-col flex-shrink-0">
+      <aside className="hidden lg:flex flex-col flex-shrink-0 h-full">
         <Sidebar
           currentView={currentView}
           onNavigate={handleNavigate}
