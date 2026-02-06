@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import LoginPage from './LoginPage'
-import Dashboard from './Dashboard'
+import AuthenticatedLayout from './AuthenticatedLayout'
 import { api } from '../lib/api'
 
 type User = { id: number; email_address: string } | null
@@ -44,5 +44,5 @@ export default function App() {
     return <LoginPage onLoginSuccess={setUser} />
   }
 
-  return <Dashboard user={user} onLogout={() => setUser(null)} />
+  return <AuthenticatedLayout user={user} onLogout={() => setUser(null)} />
 }

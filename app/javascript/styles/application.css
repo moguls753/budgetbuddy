@@ -216,3 +216,116 @@ html {
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
 }
+
+/* ========================================
+   Layout: Sidebar + Top Bar
+   ======================================== */
+
+/* Sidebar — sturdy ledger-like column */
+.sidebar {
+  width: 15rem;
+  background-color: var(--color-surface-raised);
+  border-right: 2px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Navigation items — left-edge active indicator for brutalist feel */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background-color: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-display);
+}
+
+.nav-item:hover {
+  color: var(--color-text);
+  background-color: var(--color-surface-sunken);
+}
+
+.nav-item-active {
+  color: var(--color-accent);
+  background-color: var(--color-accent-subtle);
+  font-weight: 600;
+  border-left-color: var(--color-accent);
+}
+
+.nav-item-active:hover {
+  color: var(--color-accent);
+  background-color: var(--color-accent-subtle);
+}
+
+/* Top bar — slim, functional strip */
+.topbar {
+  height: 3.5rem;
+  background-color: var(--color-surface-raised);
+  border-bottom: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Mobile sidebar backdrop — dark curtain */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 40;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-backdrop-visible {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Mobile sidebar slide transition */
+.sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+}
+
+.sidebar-mobile-open {
+  transform: translateX(0);
+}
+
+/* Staggered nav item entrance */
+.nav-stagger { opacity: 0; animation: nav-fade-in 0.25s ease forwards; }
+.nav-stagger-1 { animation-delay: 0.03s; }
+.nav-stagger-2 { animation-delay: 0.06s; }
+.nav-stagger-3 { animation-delay: 0.09s; }
+.nav-stagger-4 { animation-delay: 0.12s; }
+.nav-stagger-5 { animation-delay: 0.15s; }
+.nav-stagger-6 { animation-delay: 0.18s; }
+.nav-stagger-7 { animation-delay: 0.21s; }
+
+@keyframes nav-fade-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .nav-stagger { animation: none; opacity: 1; }
+  .sidebar-mobile { transition: none; }
+  .sidebar-backdrop { transition: none; }
+}
