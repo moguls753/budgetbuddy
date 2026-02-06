@@ -11,7 +11,7 @@ The old Vue 3 + Rails app lives on the `legacy` branch. Services like `GoCardles
 ## Tech Stack
 
 - **Backend:** Rails 8 (Ruby 3.3+)
-- **Frontend:** React (TypeScript) via `vite_rails`, Tailwind CSS, DaisyUI
+- **Frontend:** React (TypeScript) via `vite_rails`, Tailwind CSS v4
 - **Database:** SQLite3
 - **Auth:** Rails 8 session-based authentication (`bin/rails generate authentication`)
 - **Background Jobs:** Solid Queue
@@ -47,6 +47,38 @@ Tests are written with **RSpec**, using `factory_bot_rails` and `faker`.
 - German (`de`) as second locale
 - Rails: `config/locales/{en,de}.yml`
 - React: translation files in `app/javascript/locales/`
+
+## Design System
+
+**Direction:** Soft Brutalist + Warm Tones + Teal Accent
+
+**Principles:**
+- Clean, honest UI — no fake depth or unnecessary decoration
+- 2px borders, sharp corners, no shadows
+- Visible structure over hidden magic
+- Numbers displayed with confidence (monospace, large)
+- UX first — functional before pretty
+
+**Colors** (CSS variables in `app/javascript/styles/application.css`):
+- Surface: warm off-white (`#faf9f7`) / warm dark (`#1c1c1c`)
+- Accent: teal (`#0d9488` light / `#2dd4bf` dark)
+- Text: near-black / near-white with muted variants
+- Error: red with subtle backgrounds
+
+**Typography:**
+- Display: DM Sans (geometric, warm)
+- Mono: JetBrains Mono (for money/numbers)
+
+**Components:**
+- `.card` / `.card-hero` / `.card-interactive` — bordered containers
+- `.btn` / `.btn-primary` / `.btn-ghost` / `.btn-icon` — button variants
+- `.input` — form inputs with 2px borders
+- `.nav-item` / `.nav-item-active` — sidebar navigation
+- `.label` — small uppercase labels
+- `.text-default` / `.text-muted` / `.text-accent` — text colors
+- `.animate-in` / `.delay-1..4` — entrance animations
+
+**Dark mode:** Toggle via `.dark` class on `<html>`, persisted to localStorage.
 
 ## Code Style
 
