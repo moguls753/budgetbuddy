@@ -26,4 +26,11 @@ RSpec.describe User, type: :model do
   it "validates email format" do
     expect(build(:user, email_address: "not-an-email")).not_to be_valid
   end
+
+  it "creates default categories" do
+    user = create(:user)
+    user.create_default_categories!(locale: :de)
+    expect(user.categories.count).to eq(17)
+    expect(user.categories.pluck(:name)).to include("Lebensmittel & Getränke")
+  end
 end
