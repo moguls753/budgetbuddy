@@ -28,6 +28,17 @@ const pages: Record<View, () => React.JSX.Element> = {
 export default function AuthenticatedLayout({ user, onLogout }: AuthenticatedLayoutProps) {
   const [currentView, setCurrentView] = useState<View>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebar-collapsed') === 'true'
+    }
+    return false
+  })
+
+  // Persist collapsed preference
+  useEffect(() => {
+    localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed))
+  }, [sidebarCollapsed])
 
   // Close sidebar on navigate (mobile)
   const handleNavigate = (view: View) => {
@@ -60,13 +71,18 @@ export default function AuthenticatedLayout({ user, onLogout }: AuthenticatedLay
 
   return (
     <div className="min-h-screen flex">
-      {/* Desktop sidebar — always visible at lg+ */}
+      {/* Desktop sidebar — always visible at lg+, collapsible */}
       <aside className="hidden lg:flex flex-col flex-shrink-0">
-        <Sidebar currentView={currentView} onNavigate={handleNavigate} />
+        <Sidebar
+          currentView={currentView}
+          onNavigate={handleNavigate}
+          collapsed={sidebarCollapsed}
+          onToggleCollapsed={() => setSidebarCollapsed(prev => !prev)}
+        />
       </aside>
 
       {/* Mobile sidebar — overlay with slide + backdrop */}
-      {/* Always in DOM for CSS transition */}
+      {/* Always in DOM for CSS transition. Never collapsed. */}
       <div
         className={`lg:hidden sidebar-backdrop${sidebarOpen ? ' sidebar-backdrop-visible' : ''}`}
         onClick={() => setSidebarOpen(false)}

@@ -5,6 +5,8 @@ export type View = 'dashboard' | 'transactions' | 'accounts' | 'categories' | 'r
 interface SidebarNavProps {
   currentView: View
   onNavigate: (view: View) => void
+  collapsed?: boolean
+  onToggleCollapsed?: () => void
 }
 
 const navItems: { view: View; label: string; icon: ReactNode }[] = [
@@ -105,7 +107,10 @@ const navItems: { view: View; label: string; icon: ReactNode }[] = [
 const mainItems = navItems.filter(item => item.view !== 'settings')
 const settingsItem = navItems.find(item => item.view === 'settings')!
 
-export default function SidebarNav({ currentView, onNavigate }: SidebarNavProps) {
+export default function SidebarNav({ currentView, onNavigate, collapsed = false, onToggleCollapsed }: SidebarNavProps) {
+  const itemClass = (view: View) =>
+    `nav-item nav-stagger${currentView === view ? ' nav-item-active' : ''}${collapsed ? ' nav-item-collapsed' : ''}`
+
   return (
     <nav className="flex flex-col flex-1 py-2">
       <div className="flex flex-col gap-0.5">
@@ -113,23 +118,48 @@ export default function SidebarNav({ currentView, onNavigate }: SidebarNavProps)
           <button
             key={item.view}
             onClick={() => onNavigate(item.view)}
-            className={`nav-item nav-stagger nav-stagger-${i + 1}${currentView === item.view ? ' nav-item-active' : ''}`}
+            className={`${itemClass(item.view)} nav-stagger-${i + 1}`}
+            data-tooltip={item.label}
+            aria-label={collapsed ? item.label : undefined}
           >
             {item.icon}
-            {item.label}
+            {!collapsed && <span>{item.label}</span>}
           </button>
         ))}
       </div>
 
-      {/* Settings pushed to bottom */}
+      {/* Settings + collapse toggle pushed to bottom */}
       <div className="mt-auto pt-2 border-t-2 border-border">
         <button
           onClick={() => onNavigate(settingsItem.view)}
-          className={`nav-item nav-stagger nav-stagger-7${currentView === 'settings' ? ' nav-item-active' : ''}`}
+          className={`${itemClass('settings')} nav-stagger-7`}
+          data-tooltip={settingsItem.label}
+          aria-label={collapsed ? settingsItem.label : undefined}
         >
           {settingsItem.icon}
-          {settingsItem.label}
+          {!collapsed && <span>{settingsItem.label}</span>}
         </button>
+
+        {/* Collapse/expand toggle — only rendered on desktop */}
+        {onToggleCollapsed && (
+          <button
+            onClick={onToggleCollapsed}
+            className={`nav-item sidebar-toggle${collapsed ? ' nav-item-collapsed' : ''}`}
+            data-tooltip={collapsed ? 'Expand' : 'Collapse'}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            )}
+            {!collapsed && <span>Collapse</span>}
+          </button>
+        )}
       </div>
     </nav>
   )
