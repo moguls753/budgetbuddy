@@ -103,18 +103,15 @@ const navItems: { view: View; label: string; icon: ReactNode }[] = [
   },
 ]
 
-// Settings is the last item, separated to the bottom
-const mainItems = navItems.filter(item => item.view !== 'settings')
-const settingsItem = navItems.find(item => item.view === 'settings')!
-
 export default function SidebarNav({ currentView, onNavigate, collapsed = false, onToggleCollapsed }: SidebarNavProps) {
   const itemClass = (view: View) =>
     `nav-item nav-stagger${currentView === view ? ' nav-item-active' : ''}${collapsed ? ' nav-item-collapsed' : ''}`
 
   return (
     <nav className="flex flex-col flex-1 py-2">
+      {/* All 7 nav items in one group */}
       <div className="flex flex-col gap-0.5">
-        {mainItems.map((item, i) => (
+        {navItems.map((item, i) => (
           <button
             key={item.view}
             onClick={() => onNavigate(item.view)}
@@ -128,20 +125,9 @@ export default function SidebarNav({ currentView, onNavigate, collapsed = false,
         ))}
       </div>
 
-      {/* Settings + collapse toggle pushed to bottom */}
-      <div className="mt-auto pt-2 border-t-2 border-border">
-        <button
-          onClick={() => onNavigate(settingsItem.view)}
-          className={`${itemClass('settings')} nav-stagger-7`}
-          data-tooltip={settingsItem.label}
-          aria-label={collapsed ? settingsItem.label : undefined}
-        >
-          {settingsItem.icon}
-          {!collapsed && <span>{settingsItem.label}</span>}
-        </button>
-
-        {/* Collapse/expand toggle — only rendered on desktop */}
-        {onToggleCollapsed && (
+      {/* Collapse toggle — structural control, not navigation */}
+      {onToggleCollapsed && (
+        <div className="mt-auto pt-2 border-t-2 border-border">
           <button
             onClick={onToggleCollapsed}
             className={`nav-item sidebar-toggle${collapsed ? ' nav-item-collapsed' : ''}`}
@@ -159,8 +145,8 @@ export default function SidebarNav({ currentView, onNavigate, collapsed = false,
             )}
             {!collapsed && <span>Collapse</span>}
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   )
 }

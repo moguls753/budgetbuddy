@@ -238,6 +238,7 @@
 
   .sidebar-collapsed {
     width: 4rem;
+    overflow: visible;
   }
 
   /* Navigation items — left-edge active indicator for brutalist feel */
