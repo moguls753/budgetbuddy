@@ -16,7 +16,7 @@ export default function Sidebar({ currentView, onNavigate, collapsed = false, on
         collapsed ? ' justify-center' : ' px-5'
       }`}>
         <h1 className="text-lg font-bold tracking-tight">
-          {collapsed ? 'B' : 'BudgetBuddy'}
+          {collapsed ? 'K' : 'Kontor'}
         </h1>
       </div>
 

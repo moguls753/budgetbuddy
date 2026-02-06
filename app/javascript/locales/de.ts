@@ -9,7 +9,7 @@ export default {
     collapse_sidebar: 'Seitenleiste einklappen',
   },
   auth: {
-    title: 'BudgetBuddy',
+    title: 'Kontor',
     subtitle: 'Deine Finanzen, dein Server, deine Daten.',
     email_label: 'E-Mail',
     email_placeholder: 'du@beispiel.de',

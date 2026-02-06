@@ -9,7 +9,7 @@ export default {
     collapse_sidebar: 'Collapse sidebar',
   },
   auth: {
-    title: 'BudgetBuddy',
+    title: 'Kontor',
     subtitle: 'Your finances, your server, your data.',
     email_label: 'Email',
     email_placeholder: 'you@example.com',

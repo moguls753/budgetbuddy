@@ -1,4 +1,4 @@
-# BudgetBuddy
+# Kontor
 
 Open-source, self-hostable personal finance manager. Import bank transactions automatically, categorize them with LLM assistance (privacy-first: only remittance text is sent, never amounts or account details), and visualize spending patterns.
 

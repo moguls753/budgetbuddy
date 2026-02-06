@@ -1,8 +1,8 @@
-# BudgetBuddy v2 — Rails + React (vite_rails)
+# Kontor — Rails + React (vite_rails)
 
 ## Overview
 
-Fresh Rails 8 + React app in the `moguls753/budgetbuddy` repo. React is integrated via `vite_rails` — components live in `app/javascript/`, mounted in Rails views. One repo, one `package.json`, one dev server (`bin/dev`).
+Fresh Rails 8 + React app in the `moguls753/kontor` repo. React is integrated via `vite_rails` — components live in `app/javascript/`, mounted in Rails views. One repo, one `package.json`, one dev server (`bin/dev`).
 
 ## What's Done (Phase 1)
 
@@ -24,7 +24,7 @@ Fresh Rails 8 + React app in the `moguls753/budgetbuddy` repo. React is integrat
 ## Project Structure
 
 ```
-budgetbuddy/
+kontor/
 ├── app/
 │   ├── controllers/
 │   │   ├── api/v1/              # Versioned JSON API
