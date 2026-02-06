@@ -226,7 +226,7 @@
 
   /* Sidebar — sturdy ledger-like column */
   .sidebar {
-    width: 15rem;
+    width: 13rem;
     background-color: var(--color-surface-raised);
     border-right: 2px solid var(--color-border);
     display: flex;
