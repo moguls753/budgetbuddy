@@ -31,14 +31,8 @@ export default function App() {
   // Show loading while checking auth (prevents flash of login page)
   if (isLoading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--color-surface)' }}
-      >
-        <div
-          className="text-sm"
-          style={{ color: 'var(--color-text-muted)' }}
-        >
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-sm text-text-muted">
           Loading...
         </div>
       </div>

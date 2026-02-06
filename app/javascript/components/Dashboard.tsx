@@ -20,30 +20,15 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   }
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: 'var(--color-surface)' }}
-    >
+    <div className="min-h-screen">
       {/* Header */}
-      <header
-        className="border-b-2 px-6 py-3 flex items-center justify-between"
-        style={{
-          backgroundColor: 'var(--color-surface-raised)',
-          borderColor: 'var(--color-border)',
-        }}
-      >
-        <h1
-          className="text-lg font-bold"
-          style={{ color: 'var(--color-text)' }}
-        >
+      <header className="border-b-2 px-6 py-3 flex items-center justify-between bg-surface-raised border-border">
+        <h1 className="text-lg font-bold">
           BudgetBuddy
         </h1>
 
         <div className="flex items-center gap-3">
-          <span
-            className="text-sm hidden sm:inline"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+          <span className="text-sm hidden sm:inline text-text-muted">
             {user.email_address}
           </span>
           <ThemeToggle />
@@ -57,22 +42,13 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       <main className="p-6 max-w-6xl mx-auto">
         {/* Balance card */}
         <div className="card p-8 mb-8">
-          <p
-            className="text-sm font-medium mb-2"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+          <p className="text-sm font-medium mb-2 text-text-muted">
             Total Balance
           </p>
-          <p
-            className="text-5xl font-bold mono"
-            style={{ color: 'var(--color-text)' }}
-          >
+          <p className="text-5xl font-bold mono">
             0,00 €
           </p>
-          <p
-            className="text-sm mt-2"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+          <p className="text-sm mt-2 text-text-muted">
             No accounts connected yet
           </p>
         </div>
@@ -80,46 +56,28 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         {/* Quick stats grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="card p-6">
-            <p
-              className="text-sm font-medium mb-1"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <p className="text-sm font-medium mb-1 text-text-muted">
               Income this month
             </p>
-            <p
-              className="text-2xl font-bold mono"
-              style={{ color: 'var(--color-accent)' }}
-            >
+            <p className="text-2xl font-bold mono text-accent">
               +0,00 €
             </p>
           </div>
 
           <div className="card p-6">
-            <p
-              className="text-sm font-medium mb-1"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <p className="text-sm font-medium mb-1 text-text-muted">
               Expenses this month
             </p>
-            <p
-              className="text-2xl font-bold mono"
-              style={{ color: 'var(--color-text)' }}
-            >
+            <p className="text-2xl font-bold mono">
               −0,00 €
             </p>
           </div>
 
           <div className="card p-6">
-            <p
-              className="text-sm font-medium mb-1"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <p className="text-sm font-medium mb-1 text-text-muted">
               Transactions
             </p>
-            <p
-              className="text-2xl font-bold mono"
-              style={{ color: 'var(--color-text)' }}
-            >
+            <p className="text-2xl font-bold mono">
               0
             </p>
           </div>
@@ -127,16 +85,10 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
 
         {/* Empty state */}
         <div className="card p-12 text-center">
-          <p
-            className="text-lg font-medium mb-2"
-            style={{ color: 'var(--color-text)' }}
-          >
+          <p className="text-lg font-medium mb-2">
             No transactions yet
           </p>
-          <p
-            className="text-sm mb-6"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+          <p className="text-sm mb-6 text-text-muted">
             Connect your bank account to start tracking your finances.
           </p>
           <button className="btn btn-primary">

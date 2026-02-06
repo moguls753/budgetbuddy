@@ -38,10 +38,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   }
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: 'var(--color-surface)' }}
-    >
+    <div className="min-h-screen flex flex-col">
       {/* Header with theme toggle */}
       <header className="flex justify-end p-6">
         <ThemeToggle />
@@ -52,16 +49,10 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
         <div className="w-full max-w-sm">
           {/* Logo / App name */}
           <div className="mb-12 text-center">
-            <h1
-              className="text-4xl font-bold tracking-tight mb-2"
-              style={{ color: 'var(--color-text)' }}
-            >
+            <h1 className="text-4xl font-bold tracking-tight mb-2">
               BudgetBuddy
             </h1>
-            <p
-              className="text-sm"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <p className="text-sm text-text-muted">
               Your finances, your server, your data.
             </p>
           </div>
@@ -78,7 +69,6 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
               <label
                 htmlFor="email"
                 className="block text-sm font-medium mb-2"
-                style={{ color: 'var(--color-text)' }}
               >
                 Email
               </label>
@@ -100,7 +90,6 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
               <label
                 htmlFor="password"
                 className="block text-sm font-medium mb-2"
-                style={{ color: 'var(--color-text)' }}
               >
                 Password
               </label>
@@ -127,10 +116,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
           </form>
 
           {/* Footer note */}
-          <p
-            className="text-center text-sm mt-8"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+          <p className="text-center text-sm mt-8 text-text-muted">
             Self-hosted finance tracking.{' '}
             <a
               href="https://github.com/moguls753/budgetbuddy"
