@@ -86,6 +86,10 @@ module EnableBanking
       request["Authorization"] = "Bearer #{@jwt_generator.generate}"
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+        store = OpenSSL::X509::Store.new
+        store.set_default_paths
+        store.flags = 0
+        http.cert_store = store
         http.request(request)
       end
 
