@@ -6,8 +6,18 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resource :credentials, only: %i[ show create update ]
+      resources :institutions, only: %i[ index ]
+      resources :bank_connections, only: %i[ index show create destroy ] do
+        member do
+          get :callback
+          post :sync
+        end
+      end
+      resources :categories, only: %i[ index create update destroy ]
       resources :accounts, only: %i[ index show ]
       resources :transactions, only: %i[ index ]
+      resource :dashboard, only: %i[ show ]
     end
   end
 
