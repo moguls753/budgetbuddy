@@ -1,0 +1,22 @@
+de:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email_address:
+              blank: "E-Mail darf nicht leer sein"
+              taken: "E-Mail ist bereits vergeben"
+              invalid: "E-Mail ist keine gültige E-Mail-Adresse"
+            password:
+              blank: "Passwort darf nicht leer sein"
+              too_short: "Passwort ist zu kurz (mindestens 8 Zeichen)"
+            password_confirmation:
+              confirmation: "Passwortbestätigung stimmt nicht überein"
+  sessions:
+    create:
+      invalid: "Ungültige E-Mail-Adresse oder Passwort."
+      rate_limited: "Bitte versuche es später erneut."
+  users:
+    create:
+      rate_limited: "Bitte versuche es später erneut."

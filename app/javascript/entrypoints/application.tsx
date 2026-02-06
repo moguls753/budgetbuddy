@@ -1,4 +1,5 @@
 import '../styles/application.css'
+import '../lib/i18n'
 import { createRoot } from 'react-dom/client'
 import App from '../components/App'
 

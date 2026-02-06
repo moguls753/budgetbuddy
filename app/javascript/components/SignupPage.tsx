@@ -3,38 +3,39 @@ import { useTranslation } from 'react-i18next'
 import ThemeToggle from './ThemeToggle'
 import { api } from '../lib/api'
 
-interface LoginPageProps {
-  onLoginSuccess: (user: { id: number; email_address: string }) => void
-  onSwitchToSignup: () => void
+interface SignupPageProps {
+  onSignupSuccess: (user: { id: number; email_address: string }) => void
+  onSwitchToLogin: () => void
 }
 
-export default function LoginPage({ onLoginSuccess, onSwitchToSignup }: LoginPageProps) {
+export default function SignupPage({ onSignupSuccess, onSwitchToLogin }: SignupPageProps) {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [errors, setErrors] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+    setErrors([])
     setIsLoading(true)
 
     try {
-      const response = await api('/session', {
+      const response = await api('/user', {
         method: 'POST',
-        body: { email_address: email, password },
+        body: { email_address: email, password, password_confirmation: passwordConfirmation },
       })
 
       if (response.ok) {
         const user = await response.json()
-        onLoginSuccess(user)
+        onSignupSuccess(user)
       } else {
         const data = await response.json()
-        setError(data.error || t('auth.login.error_invalid'))
+        setErrors(data.errors || [t('auth.signup.error_generic')])
       }
     } catch {
-      setError(t('auth.login.error_generic'))
+      setErrors([t('auth.signup.error_generic')])
     } finally {
       setIsLoading(false)
     }
@@ -60,11 +61,13 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup }: LoginPag
             </p>
           </div>
 
-          {/* Login form */}
+          {/* Signup form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+            {errors.length > 0 && (
               <div className="error-message" role="alert">
-                {error}
+                {errors.map((err, i) => (
+                  <p key={i}>{err}</p>
+                ))}
               </div>
             )}
 
@@ -102,9 +105,29 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup }: LoginPag
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input"
-                placeholder={t('auth.login.password_placeholder')}
+                placeholder={t('auth.signup.password_placeholder')}
                 required
-                autoComplete="current-password"
+                autoComplete="new-password"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password-confirmation"
+                className="block text-sm font-medium mb-2"
+              >
+                {t('auth.signup.password_confirm_label')}
+              </label>
+              <input
+                id="password-confirmation"
+                type="password"
+                value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                className="input"
+                placeholder={t('auth.signup.password_confirm_placeholder')}
+                required
+                autoComplete="new-password"
                 disabled={isLoading}
               />
             </div>
@@ -114,15 +137,15 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup }: LoginPag
               disabled={isLoading}
               className="btn btn-primary w-full mt-6"
             >
-              {isLoading ? t('auth.login.submitting') : t('auth.login.submit')}
+              {isLoading ? t('auth.signup.submitting') : t('auth.signup.submit')}
             </button>
           </form>
 
-          {/* Switch to signup */}
+          {/* Switch to login */}
           <p className="text-center text-sm mt-8 text-text-muted">
-            {t('auth.login.no_account')}{' '}
-            <button onClick={onSwitchToSignup} className="link">
-              {t('auth.login.sign_up_link')}
+            {t('auth.signup.has_account')}{' '}
+            <button onClick={onSwitchToLogin} className="link">
+              {t('auth.signup.sign_in_link')}
             </button>
           </p>
         </div>

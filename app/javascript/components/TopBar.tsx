@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import ThemeToggle from './ThemeToggle'
 import { api } from '../lib/api'
 
@@ -8,6 +9,8 @@ interface TopBarProps {
 }
 
 export default function TopBar({ email, onLogout, onMenuToggle }: TopBarProps) {
+  const { t } = useTranslation()
+
   const handleLogout = async () => {
     try {
       const response = await api('/session', { method: 'DELETE' })
@@ -25,7 +28,7 @@ export default function TopBar({ email, onLogout, onMenuToggle }: TopBarProps) {
       <button
         onClick={onMenuToggle}
         className="btn-icon lg:hidden mr-auto"
-        aria-label="Open navigation"
+        aria-label={t('common.open_nav')}
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="3" y1="6" x2="21" y2="6" />
@@ -41,7 +44,7 @@ export default function TopBar({ email, onLogout, onMenuToggle }: TopBarProps) {
         </span>
         <ThemeToggle />
         <button onClick={handleLogout} className="btn-icon">
-          Sign out
+          {t('common.sign_out')}
         </button>
       </div>
     </header>
