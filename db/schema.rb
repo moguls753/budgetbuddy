@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_06_143255) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_06_163258) do
   create_table "accounts", force: :cascade do |t|
     t.string "account_type"
     t.string "account_uid", null: false
@@ -38,6 +38,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_143255) do
     t.string "institution_id", null: false
     t.string "institution_name"
     t.datetime "last_synced_at"
+    t.string "link"
+    t.string "provider", default: "enable_banking", null: false
+    t.string "requisition_id"
     t.string "session_id"
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
@@ -64,6 +67,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_143255) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_enable_banking_credentials_on_user_id", unique: true
+  end
+
+  create_table "go_cardless_credentials", force: :cascade do |t|
+    t.datetime "access_expires_at"
+    t.text "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "refresh_expires_at"
+    t.text "refresh_token"
+    t.string "secret_id", null: false
+    t.string "secret_key", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_go_cardless_credentials_on_user_id", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -111,6 +127,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_143255) do
   add_foreign_key "bank_connections", "users"
   add_foreign_key "categories", "users"
   add_foreign_key "enable_banking_credentials", "users"
+  add_foreign_key "go_cardless_credentials", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "transaction_records", "accounts"
   add_foreign_key "transaction_records", "categories"

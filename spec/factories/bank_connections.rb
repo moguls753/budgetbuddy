@@ -5,6 +5,7 @@ FactoryBot.define do
     institution_name { "Sparkasse Freiburg" }
     country_code { "DE" }
     status { "authorized" }
+    provider { "enable_banking" }
     session_id { SecureRandom.uuid }
     valid_until { 180.days.from_now }
 
@@ -22,6 +23,14 @@ FactoryBot.define do
     trait :error do
       status { "error" }
       error_message { "Bank connection failed" }
+    end
+
+    trait :gocardless do
+      provider { "gocardless" }
+      session_id { nil }
+      requisition_id { SecureRandom.uuid }
+      institution_id { "TOMORROW_SOLDE1S" }
+      institution_name { "Tomorrow" }
     end
   end
 end
