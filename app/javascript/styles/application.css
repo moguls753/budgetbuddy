@@ -387,3 +387,110 @@
   from { opacity: 0; transform: translateX(-8px); }
   to { opacity: 1; transform: translateX(0); }
 }
+
+@keyframes row-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@layer components {
+  /* Row entrance animation — ledger entries appearing */
+  .row-enter {
+    opacity: 0;
+    animation: row-enter 0.2s ease forwards;
+  }
+
+  /* Transaction row — interactive ledger line */
+  .tx-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    border-bottom: 2px solid var(--color-border);
+    transition: background-color 0.1s ease;
+  }
+
+  .tx-row:last-child {
+    border-bottom: none;
+  }
+
+  .tx-row:hover {
+    background-color: var(--color-surface-sunken);
+  }
+
+  /* Status indicators */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--font-display);
+    border: 2px solid var(--color-border);
+  }
+
+  .badge-accent {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background-color: var(--color-accent-subtle);
+  }
+
+  .badge-error {
+    border-color: var(--color-error);
+    color: var(--color-error);
+    background-color: var(--color-error-subtle);
+  }
+
+  .badge-muted {
+    color: var(--color-text-muted);
+  }
+
+  /* Amount coloring */
+  .amount-positive { color: var(--color-accent); }
+  .amount-negative { color: var(--color-text); }
+
+  /* Filter bar — toolbar strip */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-surface-raised);
+    border: 2px solid var(--color-border);
+    margin-bottom: 0;
+  }
+
+  .filter-bar .input {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border-width: 2px;
+  }
+
+  .filter-bar select.input {
+    min-width: 10rem;
+    width: auto;
+  }
+
+  .filter-bar input[type="date"].input {
+    width: auto;
+    min-width: 9rem;
+  }
+
+  /* Notification bar */
+  .notification-bar {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: row-enter 0.2s ease forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .row-enter { animation: none; opacity: 1; }
+    .tx-row { transition: none; }
+    .notification-bar { animation: none; }
+  }
+}

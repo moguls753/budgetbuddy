@@ -230,34 +230,38 @@ All 5 tables created, models with validations/associations/scopes, factories, sp
 
 ---
 
-## Phase 5: Data API Endpoints ← START HERE
+## Phase 5: Data API Endpoints ✅ DONE
 
-Provider-agnostic. All data comes from the same tables regardless of provider.
+8 specs passing. Provider-agnostic — all data from shared tables. No mocking, just factories.
 
-### Modify:
-- `app/controllers/api/v1/accounts_controller.rb` — return accounts with bank_connection info (including provider), balances
-- `app/controllers/api/v1/transactions_controller.rb` — filtering (account_id, category_id, date range, search text, uncategorized), pagination (page/per params)
-
-### New files:
-- `app/controllers/api/v1/dashboard_controller.rb` — total_balance, income/expenses this month, transaction count, recent 5 transactions
-- `spec/requests/api/v1/` — one spec per endpoint
+**What exists now:**
+- `app/controllers/api/v1/accounts_controller.rb` — index/show with bank_connection info, balances. Scoped to current user.
+- `app/controllers/api/v1/transactions_controller.rb` — paginated index with filters: account_id, category_id, date range (from/to), search (remittance/creditor/debtor), uncategorized. Pagination meta (page, per, total, total_pages).
+- `app/controllers/api/v1/dashboards_controller.rb` — total_balance, income/expenses this month, transaction_count, recent 5 transactions.
+- `spec/requests/api/v1/{accounts,transactions,dashboard}_spec.rb`
 
 ---
 
-## Verification
+## Backend Complete
 
-1. `bundle exec rspec` — all specs green
-2. Rails console: `EnableBanking::Client.new(app_id: "...", private_key_pem: "...").list_aspsps(country: "DE")`
-3. Rails console: `GoCardless::Client.new(credential).list_institutions(country: "DE")`
-4. Manual callback flow for both providers
-5. `GET /api/v1/transactions?from=2026-01-01&to=2026-02-06` returns paginated results from both providers
-6. `GET /api/v1/dashboard` returns aggregated data across both providers
+86 specs green. All 5 phases done.
+
+**API endpoints summary:**
+- `GET/POST/PATCH /api/v1/credentials` — manage EB/GC credentials
+- `GET /api/v1/institutions?provider=&country=` — list banks
+- `GET/POST/DELETE /api/v1/bank_connections` — manage connections
+- `GET /api/v1/bank_connections/:id/callback` — OAuth callback
+- `POST /api/v1/bank_connections/:id/sync` — trigger sync
+- `GET /api/v1/accounts` — list accounts with balances
+- `GET /api/v1/transactions` — filtered, paginated transactions
+- `GET /api/v1/dashboard` — aggregated overview
+- `GET/POST/PATCH/DELETE /api/v1/categories` — manage categories
 
 ---
 
-## Future Phases (not in scope)
+## Next: Frontend (not yet planned)
 
-- Frontend React components for all pages
+- React components for all pages (credential setup, bank connection flow, accounts, transactions, dashboard, categories)
 - `GeminiCategorizer` service for AI-powered transaction categorization
 - `RecurringTransactionDetector` for recurring payment detection
 - Statistics and charting

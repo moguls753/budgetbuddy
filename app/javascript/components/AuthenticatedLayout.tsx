@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
 import type { View } from './SidebarNav'
@@ -15,7 +16,9 @@ interface AuthenticatedLayoutProps {
   onLogout: () => void
 }
 
-const pages: Record<View, () => React.JSX.Element> = {
+type PageComponent = (props: { onNavigate?: (view: View) => void }) => React.JSX.Element
+
+const pages: Record<View, PageComponent> = {
   dashboard: DashboardPage,
   transactions: TransactionsPage,
   accounts: AccountsPage,
@@ -26,6 +29,7 @@ const pages: Record<View, () => React.JSX.Element> = {
 }
 
 export default function AuthenticatedLayout({ user, onLogout }: AuthenticatedLayoutProps) {
+  const { t } = useTranslation()
   const [currentView, setCurrentView] = useState<View>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -34,11 +38,37 @@ export default function AuthenticatedLayout({ user, onLogout }: AuthenticatedLay
     }
     return false
   })
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
   // Persist collapsed preference
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed))
   }, [sidebarCollapsed])
+
+  // Detect bank connection callback URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const successId = params.get('bank_connection_success')
+    const errorId = params.get('bank_connection_error')
+
+    if (successId) {
+      setNotification({ type: 'success', message: t('settings.bank_connected') })
+      setCurrentView('accounts')
+      window.history.replaceState({}, '', '/')
+    } else if (errorId) {
+      setNotification({ type: 'error', message: t('settings.bank_connection_error') })
+      setCurrentView('settings')
+      window.history.replaceState({}, '', '/')
+    }
+  }, [t])
+
+  // Auto-dismiss notification
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification])
 
   // Close sidebar on navigate (mobile)
   const handleNavigate = (view: View) => {
@@ -103,8 +133,22 @@ export default function AuthenticatedLayout({ user, onLogout }: AuthenticatedLay
           onLogout={onLogout}
           onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         />
+
+        {/* Notification bar */}
+        {notification && (
+          <div className={`notification-bar ${notification.type === 'success' ? 'success-message' : 'error-message'}`}>
+            <span>{notification.message}</span>
+            <button
+              className="text-xs font-semibold uppercase tracking-wider cursor-pointer opacity-70 hover:opacity-100"
+              onClick={() => setNotification(null)}
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         <main className="flex-1 overflow-y-auto bg-surface">
-          <ActivePage />
+          <ActivePage onNavigate={handleNavigate} />
         </main>
       </div>
     </div>
