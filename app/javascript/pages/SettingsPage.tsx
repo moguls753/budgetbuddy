@@ -38,34 +38,35 @@ export default function SettingsPage() {
       <h2 className="text-2xl font-bold mb-6">{t('settings.title')}</h2>
 
       {/* Language */}
-      <div className="card mb-4">
-        <div className="px-5 py-4 border-b-2 border-border">
-          <h3 className="text-sm font-bold">{t('settings.language')}</h3>
-          <p className="text-xs text-text-muted mt-0.5">{t('settings.language_description')}</p>
-        </div>
-        <div className="px-5 py-4">
-          <LanguageSwitcher />
+      <div className="mb-6">
+        <h3 className="text-base font-bold">{t('settings.language')}</h3>
+        <p className="text-xs text-text-muted mt-0.5 mb-2">{t('settings.language_description')}</p>
+        <div className="card">
+          <div className="px-5 py-4">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
 
       {/* Credentials */}
-      <div className="card mb-4">
-        <div className="px-5 py-4 border-b-2 border-border">
-          <h3 className="text-sm font-bold">{t('settings.credentials')}</h3>
-          <p className="text-xs text-text-muted mt-0.5">{t('settings.credentials_description')}</p>
-        </div>
-
+      <div className="mb-6">
+        <h3 className="text-base font-bold">{t('settings.credentials')}</h3>
+        <p className="text-xs text-text-muted mt-0.5 mb-2">{t('settings.credentials_description')}</p>
         {isLoading ? (
-          <div className="px-5 py-4 text-sm text-text-muted">{t('common.loading')}</div>
+          <div className="card">
+            <div className="px-5 py-4 text-sm text-text-muted">{t('common.loading')}</div>
+          </div>
         ) : error ? (
-          <div className="px-5 py-4">
-            <div className="error-message flex items-center justify-between">
-              <span>{t('common.load_error')}</span>
-              <button className="btn-icon text-xs" onClick={fetchCredentials}>{t('common.retry')}</button>
+          <div className="card">
+            <div className="px-5 py-4">
+              <div className="error-message flex items-center justify-between">
+                <span>{t('common.load_error')}</span>
+                <button className="btn-icon text-xs" onClick={fetchCredentials}>{t('common.retry')}</button>
+              </div>
             </div>
           </div>
-        ) : credentials && (
-          <>
+        ) : credentials ? (
+          <div className="card">
             {/* Enable Banking */}
             <div className="px-5 py-4 border-b-2 border-border">
               <div className="flex items-center justify-between">
@@ -79,8 +80,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-text-muted mt-0.5">{t('settings.enable_banking_description')}</p>
                 </div>
                 <button
-                  className="btn btn-ghost text-sm shrink-0 ml-4"
-                  style={{ padding: '0.5rem 1rem' }}
+                  className="btn btn-ghost text-sm shrink-0 ml-4 px-4 py-2"
                   onClick={() => toggleProvider('enable_banking')}
                 >
                   {credentials.enable_banking.configured ? t('settings.update_credentials') : t('settings.configure')}
@@ -108,8 +108,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-text-muted mt-0.5">{t('settings.gocardless_description')}</p>
                 </div>
                 <button
-                  className="btn btn-ghost text-sm shrink-0 ml-4"
-                  style={{ padding: '0.5rem 1rem' }}
+                  className="btn btn-ghost text-sm shrink-0 ml-4 px-4 py-2"
                   onClick={() => toggleProvider('gocardless')}
                 >
                   {credentials.gocardless.configured ? t('settings.update_credentials') : t('settings.configure')}
@@ -123,18 +122,18 @@ export default function SettingsPage() {
                 />
               )}
             </div>
-          </>
-        )}
+          </div>
+        ) : null}
       </div>
 
       {/* Connect Bank */}
-      <div className="card">
-        <div className="px-5 py-4 border-b-2 border-border">
-          <h3 className="text-sm font-bold">{t('settings.connect_bank')}</h3>
-          <p className="text-xs text-text-muted mt-0.5">{t('settings.connect_bank_description')}</p>
-        </div>
-        <div className="px-5 py-4">
-          {credentials && <ConnectBankFlow credentials={credentials} />}
+      <div>
+        <h3 className="text-base font-bold">{t('settings.connect_bank')}</h3>
+        <p className="text-xs text-text-muted mt-0.5 mb-2">{t('settings.connect_bank_description')}</p>
+        <div className="card">
+          <div className="px-5 py-4">
+            {credentials && <ConnectBankFlow credentials={credentials} />}
+          </div>
         </div>
       </div>
     </div>
