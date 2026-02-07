@@ -4,7 +4,7 @@ import { api } from '../lib/api'
 import type { Category } from '../lib/types'
 
 export default function CategoriesPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
@@ -13,6 +13,7 @@ export default function CategoriesPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [error, setError] = useState('')
+  const [isCreatingDefaults, setIsCreatingDefaults] = useState(false)
   const addRef = useRef<HTMLInputElement>(null)
   const editRef = useRef<HTMLInputElement>(null)
 
@@ -61,6 +62,26 @@ export default function CategoriesPage() {
     } else {
       const data = await r.json()
       setError(data.errors?.[0] || t('common.error'))
+    }
+  }
+
+  const handleCreateDefaults = async () => {
+    setIsCreatingDefaults(true)
+    setError('')
+    try {
+      const r = await api('/api/v1/categories/create_defaults', {
+        method: 'POST',
+        body: { locale: i18n.language },
+      })
+      if (r.ok) {
+        setCategories(await r.json())
+      } else {
+        setError(t('common.error'))
+      }
+    } catch {
+      setError(t('common.error'))
+    } finally {
+      setIsCreatingDefaults(false)
     }
   }
 
@@ -119,7 +140,14 @@ export default function CategoriesPage() {
             <line x1="7" y1="7" x2="7.01" y2="7" />
           </svg>
           <p className="text-lg font-medium mb-2">{t('categories.empty_title')}</p>
-          <p className="text-sm text-text-muted">{t('categories.empty_description')}</p>
+          <p className="text-sm text-text-muted mb-4">{t('categories.empty_description')}</p>
+          <button
+            className="btn btn-primary text-sm"
+            onClick={handleCreateDefaults}
+            disabled={isCreatingDefaults}
+          >
+            {isCreatingDefaults ? t('common.loading') : t('categories.create_defaults')}
+          </button>
         </div>
       ) : (
         <div className="card">

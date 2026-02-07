@@ -25,6 +25,12 @@ module Api
         end
       end
 
+      def create_defaults
+        locale = params.fetch(:locale, :en).to_sym
+        Current.user.create_default_categories!(locale:)
+        render json: Current.user.categories.order(:name).map { |c| category_json(c) }
+      end
+
       def destroy
         category = Current.user.categories.find(params[:id])
         category.destroy!

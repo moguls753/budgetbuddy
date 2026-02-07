@@ -104,6 +104,7 @@ export default {
     add: 'Add Category',
     name_placeholder: 'Category name',
     delete_confirm: 'Delete this category? Transactions will become uncategorized.',
+    create_defaults: 'Create Default Categories',
   },
   recurring: {
     title: 'Recurring',

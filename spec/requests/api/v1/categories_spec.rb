@@ -37,6 +37,12 @@ RSpec.describe "Api::V1::Categories", type: :request do
     expect(Category.find_by(id: category.id)).to be_nil
   end
 
+  it "creates default categories" do
+    post create_defaults_api_v1_categories_path, params: { locale: "en" }, as: :json
+    expect(response).to have_http_status(:ok)
+    expect(user.categories.count).to eq(17)
+  end
+
   it "scopes to current user" do
     other_user = create(:user)
     other_category = create(:category, user: other_user, name: "Other")

@@ -104,6 +104,7 @@ export default {
     add: 'Kategorie hinzufügen',
     name_placeholder: 'Kategoriename',
     delete_confirm: 'Kategorie löschen? Transaktionen werden unkategorisiert.',
+    create_defaults: 'Standardkategorien erstellen',
   },
   recurring: {
     title: 'Wiederkehrend',

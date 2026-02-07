@@ -14,7 +14,11 @@ Rails.application.routes.draw do
           post :sync
         end
       end
-      resources :categories, only: %i[ index create update destroy ]
+      resources :categories, only: %i[ index create update destroy ] do
+        collection do
+          post :create_defaults
+        end
+      end
       resources :accounts, only: %i[ index show ]
       resources :transactions, only: %i[ index ]
       resource :dashboard, only: %i[ show ]
