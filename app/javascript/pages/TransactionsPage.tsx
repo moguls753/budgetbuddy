@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { api } from '../lib/api'
 import { formatAmount, formatDate, transactionDisplayName } from '../lib/format'
 import type { Transaction, PaginationMeta, Account, Category } from '../lib/types'
+import CategorizationModal from '../components/CategorizationModal'
 
 export default function TransactionsPage() {
   const { t } = useTranslation()
@@ -28,7 +29,7 @@ export default function TransactionsPage() {
 
   // LLM categorization
   const [llmConfigured, setLlmConfigured] = useState(false)
-  const [isCategorizing, setIsCategorizing] = useState(false)
+  const [showCategorizeModal, setShowCategorizeModal] = useState(false)
 
   // Load dropdown data + LLM status once
   useEffect(() => {
@@ -85,15 +86,6 @@ export default function TransactionsPage() {
   }, [debouncedSearch, accountId, categoryId, dateFrom, dateTo, uncategorized, page, retryKey])
 
   const hasFilters = search || accountId || categoryId || dateFrom || dateTo || uncategorized
-
-  const handleCategorize = async () => {
-    setIsCategorizing(true)
-    try {
-      const r = await api('/api/v1/transactions/categorize', { method: 'POST' })
-      if (r.ok) setRetryKey(k => k + 1)
-    } catch {}
-    finally { setIsCategorizing(false) }
-  }
 
   const clearFilters = () => {
     setSearch('')
@@ -160,15 +152,9 @@ export default function TransactionsPage() {
         {llmConfigured && (
           <button
             className="btn btn-primary text-xs px-3 py-2"
-            onClick={handleCategorize}
-            disabled={isCategorizing}
+            onClick={() => setShowCategorizeModal(true)}
           >
-            {isCategorizing ? (
-              <span className="flex items-center gap-2">
-                <span className="spinner" />
-                {t('transactions.categorizing')}
-              </span>
-            ) : t('transactions.categorize')}
+            {t('transactions.categorize')}
           </button>
         )}
       </div>
@@ -271,6 +257,12 @@ export default function TransactionsPage() {
             {t('transactions.next')}
           </button>
         </div>
+      )}
+      {showCategorizeModal && (
+        <CategorizationModal onClose={(didCategorize) => {
+          setShowCategorizeModal(false)
+          if (didCategorize) setRetryKey(k => k + 1)
+        }} />
       )}
     </div>
   )
