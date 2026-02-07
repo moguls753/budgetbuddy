@@ -13,6 +13,7 @@ export default function CategoriesPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [error, setError] = useState('')
+  const [deletingId, setDeletingId] = useState<number | null>(null)
   const [isCreatingDefaults, setIsCreatingDefaults] = useState(false)
   const addRef = useRef<HTMLInputElement>(null)
   const editRef = useRef<HTMLInputElement>(null)
@@ -86,17 +87,18 @@ export default function CategoriesPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm(t('categories.delete_confirm'))) return
     const r = await api(`/api/v1/categories/${id}`, { method: 'DELETE' })
     if (r.ok || r.status === 204) {
       setCategories(prev => prev.filter(c => c.id !== id))
     }
+    setDeletingId(null)
   }
 
   const startEdit = (cat: Category) => {
     setEditingId(cat.id)
     setEditName(cat.name)
     setIsAdding(false)
+    setDeletingId(null)
   }
 
   if (isLoading) {
@@ -204,14 +206,29 @@ export default function CategoriesPage() {
               ) : (
                 <>
                   <span className="text-sm font-medium">{cat.name}</span>
-                  <div className="flex items-center gap-1 shrink-0 ml-3">
-                    <button className="btn-icon text-xs" onClick={() => startEdit(cat)}>
-                      {t('common.edit')}
-                    </button>
-                    <button className="btn-icon text-xs" onClick={() => handleDelete(cat.id)}>
-                      {t('common.delete')}
-                    </button>
-                  </div>
+                  {deletingId === cat.id ? (
+                    <div className="flex items-center gap-2 shrink-0 ml-3">
+                      <span className="text-xs text-error">{t('categories.confirm_short')}</span>
+                      <button
+                        className="btn-icon text-xs border-error text-error"
+                        onClick={() => handleDelete(cat.id)}
+                      >
+                        {t('common.delete')}
+                      </button>
+                      <button className="btn-icon text-xs" onClick={() => setDeletingId(null)}>
+                        {t('common.cancel')}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 shrink-0 ml-3">
+                      <button className="btn-icon text-xs" onClick={() => startEdit(cat)}>
+                        {t('common.edit')}
+                      </button>
+                      <button className="btn-icon text-xs" onClick={() => { setDeletingId(cat.id); setEditingId(null) }}>
+                        {t('common.delete')}
+                      </button>
+                    </div>
+                  )}
                 </>
               )}
             </div>
