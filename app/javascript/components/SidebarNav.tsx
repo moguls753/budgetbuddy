@@ -82,7 +82,7 @@ export default function SidebarNav({ currentView, onNavigate, collapsed = false,
   const { t } = useTranslation()
 
   const itemClass = (view: View) =>
-    `nav-item nav-stagger${currentView === view ? ' nav-item-active' : ''}${collapsed ? ' nav-item-collapsed' : ''}`
+    `nav-item${currentView === view ? ' nav-item-active' : ''}${collapsed ? ' nav-item-collapsed' : ''}`
 
   return (
     <nav className="flex flex-col flex-1 py-2">
@@ -92,7 +92,7 @@ export default function SidebarNav({ currentView, onNavigate, collapsed = false,
           <button
             key={view}
             onClick={() => onNavigate(view)}
-            className={`${itemClass(view)} nav-stagger-${i + 1}`}
+            className={itemClass(view)}
             data-tooltip={t(`nav.${view}`)}
             aria-label={collapsed ? t(`nav.${view}`) : undefined}
           >
