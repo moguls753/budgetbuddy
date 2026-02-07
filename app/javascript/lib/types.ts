@@ -35,8 +35,10 @@ export interface Transaction {
   creditor_iban: string | null
   debtor_name: string | null
   debtor_iban: string | null
+  bank_transaction_code: string | null
   category: Category | null
   account_id: number
+  account_name: string
 }
 
 export interface PaginationMeta {

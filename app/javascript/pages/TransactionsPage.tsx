@@ -31,6 +31,9 @@ export default function TransactionsPage() {
   const [llmConfigured, setLlmConfigured] = useState(false)
   const [showCategorizeModal, setShowCategorizeModal] = useState(false)
 
+  // Expanded row
+  const [expandedId, setExpandedId] = useState<number | null>(null)
+
   // Load dropdown data + LLM status once
   useEffect(() => {
     api('/api/v1/accounts').then(r => r.ok ? r.json() : []).then(setAccounts).catch(() => {})
@@ -84,6 +87,19 @@ export default function TransactionsPage() {
 
     return () => controller.abort()
   }, [debouncedSearch, accountId, categoryId, dateFrom, dateTo, uncategorized, page, retryKey])
+
+  const hasMultipleAccounts = accounts.length > 1
+
+  const humanizeTransactionCode = (code: string | null): string | null => {
+    if (!code) return null
+    const map: Record<string, string> = {
+      DIRECT_DEBIT: t('transactions.type_direct_debit'),
+      SEPA_CREDIT_TRANSFER: t('transactions.type_sepa_credit_transfer'),
+      CARD_PAYMENT: t('transactions.type_card_payment'),
+      STANDING_ORDER: t('transactions.type_standing_order'),
+    }
+    return map[code] || code.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  }
 
   const hasFilters = search || accountId || categoryId || dateFrom || dateTo || uncategorized
 
@@ -188,45 +204,93 @@ export default function TransactionsPage() {
           </div>
         ) : (
           <>
-            {transactions.map((tx, i) => {
+            {transactions.map((tx) => {
               const amt = parseFloat(tx.amount)
-              return (
-                <div
-                  key={tx.id}
-                  className="tx-row"
-                >
-                  {/* Date */}
-                  <span className="mono text-xs text-text-muted w-24 shrink-0 hidden sm:block">
-                    {formatDate(tx.booking_date)}
-                  </span>
+              const isExpanded = expandedId === tx.id
+              const counterpartyIban = amt < 0 ? tx.creditor_iban : tx.debtor_iban
+              const showValueDate = tx.value_date && tx.value_date !== tx.booking_date
 
-                  {/* Name + meta */}
-                  <div className="min-w-0 flex-1 mx-3">
-                    <p className="font-medium text-sm truncate">
-                      {transactionDisplayName(tx)}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5 sm:hidden">
-                      <span className="mono text-xs text-text-muted">
-                        {formatDate(tx.booking_date)}
-                      </span>
+              return (
+                <div key={tx.id}>
+                  <div
+                    className={`tx-row ${isExpanded ? 'tx-row-expanded' : ''}`}
+                    onClick={() => setExpandedId(isExpanded ? null : tx.id)}
+                  >
+                    {/* Date */}
+                    <span className="mono text-xs text-text-muted w-24 shrink-0 hidden sm:block">
+                      {formatDate(tx.booking_date)}
+                    </span>
+
+                    {/* Name + meta */}
+                    <div className="min-w-0 flex-1 mx-3">
+                      <p className="font-medium text-sm truncate">
+                        {transactionDisplayName(tx)}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5 sm:hidden">
+                        <span className="mono text-xs text-text-muted">
+                          {formatDate(tx.booking_date)}
+                        </span>
+                      </div>
                     </div>
+
+                    {/* Category badge */}
+                    {tx.category ? (
+                      <span className="badge badge-muted text-xs shrink-0 hidden md:inline-flex">
+                        {tx.category.name}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-text-muted italic shrink-0 hidden md:inline-flex">
+                        —
+                      </span>
+                    )}
+
+                    {/* Amount */}
+                    <p className={`mono font-semibold text-sm whitespace-nowrap ml-3 ${amt >= 0 ? 'amount-positive' : 'amount-negative'}`}>
+                      {formatAmount(tx.amount, tx.currency)}
+                    </p>
                   </div>
 
-                  {/* Category badge */}
-                  {tx.category ? (
-                    <span className="badge badge-muted text-xs shrink-0 hidden md:inline-flex">
-                      {tx.category.name}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-text-muted italic shrink-0 hidden md:inline-flex">
-                      —
-                    </span>
-                  )}
-
-                  {/* Amount */}
-                  <p className={`mono font-semibold text-sm whitespace-nowrap ml-3 ${amt >= 0 ? 'amount-positive' : 'amount-negative'}`}>
-                    {formatAmount(tx.amount, tx.currency)}
-                  </p>
+                  {/* Detail panel */}
+                  <div className={`tx-detail ${isExpanded ? 'tx-detail-open' : ''}`}>
+                    <div className="tx-detail-grid">
+                      {tx.remittance && (
+                        <>
+                          <span className="tx-detail-label">{t('transactions.detail_remittance')}</span>
+                          <span className="tx-detail-value">{tx.remittance}</span>
+                        </>
+                      )}
+                      {tx.bank_transaction_code && (
+                        <>
+                          <span className="tx-detail-label">{t('transactions.detail_type')}</span>
+                          <span className="tx-detail-value">{humanizeTransactionCode(tx.bank_transaction_code)}</span>
+                        </>
+                      )}
+                      <span className="tx-detail-label">{t('transactions.detail_status')}</span>
+                      <span className="tx-detail-value">
+                        <span className={`status-dot ${tx.status === 'booked' ? 'status-dot-active' : 'status-dot-inactive'}`}>
+                          {tx.status === 'booked' ? t('transactions.status_booked') : t('transactions.status_pending')}
+                        </span>
+                      </span>
+                      {counterpartyIban && (
+                        <>
+                          <span className="tx-detail-label">{t('transactions.detail_iban')}</span>
+                          <span className="tx-detail-value mono text-xs">{counterpartyIban}</span>
+                        </>
+                      )}
+                      {showValueDate && (
+                        <>
+                          <span className="tx-detail-label">{t('transactions.detail_value_date')}</span>
+                          <span className="tx-detail-value mono text-xs">{formatDate(tx.value_date!)}</span>
+                        </>
+                      )}
+                      {hasMultipleAccounts && tx.account_name && (
+                        <>
+                          <span className="tx-detail-label">{t('transactions.detail_account')}</span>
+                          <span className="tx-detail-value">{tx.account_name}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )
             })}

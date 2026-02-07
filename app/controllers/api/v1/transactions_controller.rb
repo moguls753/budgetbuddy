@@ -50,8 +50,10 @@ module Api
           creditor_iban: tx.creditor_iban,
           debtor_name: tx.debtor_name,
           debtor_iban: tx.debtor_iban,
+          bank_transaction_code: tx.bank_transaction_code,
           category: tx.category ? { id: tx.category.id, name: tx.category.name } : nil,
-          account_id: tx.account_id
+          account_id: tx.account_id,
+          account_name: tx.account.name
         }
       end
     end
