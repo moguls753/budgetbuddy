@@ -12,7 +12,7 @@ class LlmCategorizer
     raise "LLM not configured" unless @credential
 
     transactions = @user.transaction_records.uncategorized.order(booking_date: :desc).limit(MAX_TRANSACTIONS)
-    results = { total: transactions.size, categorized: 0, failed: 0 }
+    results = { total: transactions.size, categorized: 0, failed: 0, breakdown: Hash.new(0) }
 
     return results if transactions.empty?
 
@@ -21,7 +21,9 @@ class LlmCategorizer
     transactions.each_slice(BATCH_SIZE) do |batch|
       response = call_llm(batch, category_names)
       assignments = parse_response(response)
-      results[:categorized] += apply_assignments(batch, assignments)
+      applied, batch_breakdown = apply_assignments(batch, assignments)
+      results[:categorized] += applied
+      batch_breakdown.each { |name, count| results[:breakdown][name] += count }
     rescue => e
       results[:failed] += batch.size
       Rails.logger.error("LLM categorization error: #{e.message}")
@@ -114,6 +116,7 @@ class LlmCategorizer
   def apply_assignments(batch, assignments)
     name_to_id = @categories.each_with_object({}) { |(id, name), h| h[name.downcase] = id }
     applied = 0
+    breakdown = Hash.new(0)
 
     batch.each do |transaction|
       category_name = assignments[transaction.id.to_s]
@@ -124,8 +127,9 @@ class LlmCategorizer
 
       transaction.update_column(:category_id, category_id)
       applied += 1
+      breakdown[@categories[category_id]] += 1
     end
 
-    applied
+    [ applied, breakdown ]
   end
 end

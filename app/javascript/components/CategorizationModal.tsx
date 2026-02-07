@@ -12,7 +12,7 @@ export default function CategorizationModal({ onClose }: Props) {
   const { t } = useTranslation()
   const [step, setStep] = useState<Step>('loading')
   const [count, setCount] = useState(0)
-  const [results, setResults] = useState<{ total: number; categorized: number; failed: number } | null>(null)
+  const [results, setResults] = useState<{ total: number; categorized: number; failed: number; breakdown?: Record<string, number> } | null>(null)
 
   useEffect(() => {
     api('/api/v1/transactions?uncategorized=true&per=1')
@@ -112,6 +112,19 @@ export default function CategorizationModal({ onClose }: Props) {
                     </div>
                   )}
                 </div>
+
+                {results.breakdown && Object.keys(results.breakdown).length > 0 && (
+                  <div className="border-t-2 border-border pt-3 mb-4 max-h-48 overflow-y-auto">
+                    {Object.entries(results.breakdown)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([name, count]) => (
+                        <div key={name} className="flex items-center justify-between py-1">
+                          <span className="text-sm truncate mr-4">{name}</span>
+                          <span className="mono text-sm font-semibold text-text-muted shrink-0">{count}</span>
+                        </div>
+                      ))}
+                  </div>
+                )}
               </>
             )}
             <button className="btn btn-ghost text-sm px-4 py-2" onClick={() => onClose(didCategorize)}>

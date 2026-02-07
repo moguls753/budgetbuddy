@@ -33,6 +33,7 @@ RSpec.describe LlmCategorizer do
     expect(tx1.reload.category).to eq(groceries)
     expect(tx2.reload.category).to be_nil
     expect(results[:categorized]).to eq(1)
+    expect(results[:breakdown]).to eq({ "Groceries" => 1 })
   end
 
   it "does not send amounts or IBANs in the prompt" do
