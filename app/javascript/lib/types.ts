@@ -94,4 +94,5 @@ export interface BankConnection {
 export interface CredentialsStatus {
   enable_banking: { configured: boolean; app_id?: string }
   gocardless: { configured: boolean }
+  llm: { configured: boolean; base_url?: string; llm_model?: string }
 }

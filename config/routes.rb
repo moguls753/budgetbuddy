@@ -6,7 +6,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resource :credentials, only: %i[ show create update ]
+      resource :credentials, only: %i[ show create update ] do
+        post :test, on: :collection
+      end
       resources :institutions, only: %i[ index ]
       resources :bank_connections, only: %i[ index show create destroy ] do
         member do

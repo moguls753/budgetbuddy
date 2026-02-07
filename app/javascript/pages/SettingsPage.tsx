@@ -126,6 +126,44 @@ export default function SettingsPage() {
         ) : null}
       </div>
 
+      {/* AI Categorization */}
+      <div className="mb-8">
+        <h3 className="text-base font-bold">{t('settings.llm')}</h3>
+        <p className="text-xs text-text-muted mt-0.5 mb-2">{t('settings.llm_description')}</p>
+        {credentials ? (
+          <div className="card">
+            <div className="px-5 py-4">
+              <div className="flex items-center justify-between">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <p className="text-sm font-semibold">{t('settings.llm_provider')}</p>
+                    <span className={`status-dot ${credentials.llm.configured ? 'status-dot-active' : 'status-dot-inactive'}`}>
+                      {credentials.llm.configured ? t('settings.configured') : t('settings.not_configured')}
+                    </span>
+                  </div>
+                  {credentials.llm.configured && (
+                    <p className="text-xs text-text-muted mt-0.5 mono">{credentials.llm.base_url} — {credentials.llm.llm_model}</p>
+                  )}
+                </div>
+                <button
+                  className="btn btn-ghost text-sm shrink-0 ml-4 px-4 py-2"
+                  onClick={() => toggleProvider('llm')}
+                >
+                  {credentials.llm.configured ? t('settings.update_credentials') : t('settings.configure')}
+                </button>
+              </div>
+              {expandedProvider === 'llm' && (
+                <CredentialForm
+                  provider="llm"
+                  isConfigured={credentials.llm.configured}
+                  onSaved={() => { fetchCredentials(); setExpandedProvider(null) }}
+                />
+              )}
+            </div>
+          </div>
+        ) : null}
+      </div>
+
       {/* Connect Bank */}
       <div>
         <h3 className="text-base font-bold">{t('settings.connect_bank')}</h3>

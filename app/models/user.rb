@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_one :enable_banking_credential, dependent: :destroy
   has_one :go_cardless_credential, dependent: :destroy
+  has_one :llm_credential, dependent: :destroy
   has_many :bank_connections, dependent: :destroy
   has_many :accounts, through: :bank_connections
   has_many :transaction_records, through: :accounts

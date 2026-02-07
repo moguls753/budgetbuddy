@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_06_163258) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_07_134427) do
   create_table "accounts", force: :cascade do |t|
     t.string "account_type"
     t.string "account_uid", null: false
@@ -82,6 +82,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_163258) do
     t.index ["user_id"], name: "index_go_cardless_credentials_on_user_id", unique: true
   end
 
+  create_table "llm_credentials", force: :cascade do |t|
+    t.text "api_key"
+    t.string "base_url", null: false
+    t.datetime "created_at", null: false
+    t.string "llm_model", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_llm_credentials_on_user_id", unique: true
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -128,6 +138,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_163258) do
   add_foreign_key "categories", "users"
   add_foreign_key "enable_banking_credentials", "users"
   add_foreign_key "go_cardless_credentials", "users"
+  add_foreign_key "llm_credentials", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "transaction_records", "accounts"
   add_foreign_key "transaction_records", "categories"
