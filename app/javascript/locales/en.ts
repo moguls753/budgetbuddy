@@ -72,6 +72,7 @@ export default {
     filter_account: 'All accounts',
     filter_category: 'All categories',
     filter_uncategorized: 'Uncategorized only',
+    filter_dates: 'Dates',
     date_from: 'From',
     date_to: 'To',
     page_of: 'Page {{page}} of {{total}}',

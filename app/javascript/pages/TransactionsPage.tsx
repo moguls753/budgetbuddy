@@ -32,6 +32,9 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
   const [llmConfigured, setLlmConfigured] = useState(false)
   const [showCategorizeModal, setShowCategorizeModal] = useState(false)
 
+  // Date filter toggle
+  const [showDateFilters, setShowDateFilters] = useState(false)
+
   // Expanded row
   const [expandedId, setExpandedId] = useState<number | null>(null)
 
@@ -111,6 +114,7 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
     setDateFrom('')
     setDateTo('')
     setUncategorized(false)
+    setShowDateFilters(false)
   }
 
   return (
@@ -128,63 +132,83 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
         )}
       </div>
 
-      {/* Search — full width, prominent */}
-      <div className="search-bar">
+      {/* Controls — search + filters as one unit */}
+      <div className="controls-card">
         <input
           type="text"
-          className="input"
+          className="input controls-search"
           placeholder={t('transactions.search_placeholder')}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-      </div>
 
-      {/* Filters — compact strip */}
-      <div className="filter-bar">
-        <select
-          className="input"
-          value={accountId}
-          onChange={e => setAccountId(e.target.value)}
-        >
-          <option value="">{t('transactions.filter_account')}</option>
-          {accounts.map(a => (
-            <option key={a.id} value={a.id}>{a.name}</option>
-          ))}
-        </select>
-        <select
-          className="input"
-          value={categoryId}
-          onChange={e => setCategoryId(e.target.value)}
-        >
-          <option value="">{t('transactions.filter_category')}</option>
-          {categories.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
-        </select>
-        <input
-          type="date"
-          className="input"
-          value={dateFrom}
-          onChange={e => setDateFrom(e.target.value)}
-          title={t('transactions.date_from')}
-        />
-        <input
-          type="date"
-          className="input"
-          value={dateTo}
-          onChange={e => setDateTo(e.target.value)}
-          title={t('transactions.date_to')}
-        />
-        <button
-          className={`btn text-xs px-3 py-2 ${uncategorized ? 'btn-primary' : 'btn-ghost'}`}
-          onClick={() => setUncategorized(!uncategorized)}
-        >
-          {t('transactions.filter_uncategorized')}
-        </button>
+        <div className="filter-bar">
+          <select
+            className="input"
+            value={categoryId}
+            onChange={e => setCategoryId(e.target.value)}
+          >
+            <option value="">{t('transactions.filter_category')}</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          {hasMultipleAccounts && (
+            <select
+              className="input"
+              value={accountId}
+              onChange={e => setAccountId(e.target.value)}
+            >
+              <option value="">{t('transactions.filter_account')}</option>
+              {accounts.map(a => (
+                <option key={a.id} value={a.id}>{a.name}</option>
+              ))}
+            </select>
+          )}
+          <button
+            className={`btn text-xs px-3 py-2 ${uncategorized ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => setUncategorized(!uncategorized)}
+          >
+            {t('transactions.filter_uncategorized')}
+          </button>
+          <button
+            className={`btn text-xs px-3 py-2 ${(showDateFilters || dateFrom || dateTo) ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => setShowDateFilters(!showDateFilters)}
+          >
+            {t('transactions.filter_dates')}
+          </button>
+          {hasFilters && (
+            <button
+              className="link text-xs cursor-pointer ml-auto"
+              onClick={clearFilters}
+            >
+              {t('transactions.clear_filters')}
+            </button>
+          )}
+        </div>
+
+        {showDateFilters && (
+          <div className="filter-bar-dates">
+            <label className="text-xs text-text-muted font-medium">{t('transactions.date_from')}</label>
+            <input
+              type="date"
+              className="input"
+              value={dateFrom}
+              onChange={e => setDateFrom(e.target.value)}
+            />
+            <label className="text-xs text-text-muted font-medium">{t('transactions.date_to')}</label>
+            <input
+              type="date"
+              className="input"
+              value={dateTo}
+              onChange={e => setDateTo(e.target.value)}
+            />
+          </div>
+        )}
       </div>
 
       {/* Transaction list */}
-      <div className="card border-t-0">
+      <div className="card mt-1.5">
         {error ? (
           <div className="p-8">
             <div className="error-message flex items-center justify-between">

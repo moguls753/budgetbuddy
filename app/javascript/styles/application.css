@@ -509,27 +509,31 @@
   .amount-positive { color: var(--color-accent); }
   .amount-negative { color: var(--color-text); }
 
-  /* Search bar — prominent, full-width */
-  .search-bar {
-    margin-bottom: 0;
+  /* Controls card — unified search + filter container */
+  .controls-card {
+    background-color: var(--color-surface-sunken);
+    border: 2px solid var(--color-border);
   }
 
-  .search-bar .input {
+  .controls-search {
     padding: 0.625rem 1rem;
     font-size: 0.9375rem;
-    border-width: 2px;
-    border-bottom: none;
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    background-color: var(--color-surface-raised);
+  }
+
+  .controls-search:focus {
+    border-bottom-color: var(--color-accent);
   }
 
   /* Filter bar — compact refinement strip */
   .filter-bar {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
-    background-color: var(--color-surface-sunken);
-    border: 2px solid var(--color-border);
-    margin-bottom: 0;
   }
 
   .filter-bar .input {
@@ -544,7 +548,21 @@
     width: auto;
   }
 
-  .filter-bar input[type="date"].input {
+  /* Date filters — collapsible row */
+  .filter-bar-dates {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-top: 2px solid var(--color-border);
+  }
+
+  .filter-bar-dates .input {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+    border-width: 2px;
+    background-color: var(--color-surface-raised);
     width: auto;
     min-width: 8.5rem;
   }
