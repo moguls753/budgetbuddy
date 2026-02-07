@@ -91,6 +91,7 @@ export default function SettingsPage() {
                   provider="enable_banking"
                   isConfigured={credentials.enable_banking.configured}
                   onSaved={() => { fetchCredentials(); setExpandedProvider(null) }}
+                  initialValues={credentials.enable_banking.configured ? { app_id: credentials.enable_banking.app_id ?? '' } : undefined}
                 />
               )}
             </div>
@@ -157,6 +158,7 @@ export default function SettingsPage() {
                   provider="llm"
                   isConfigured={credentials.llm.configured}
                   onSaved={() => { fetchCredentials(); setExpandedProvider(null) }}
+                  initialValues={credentials.llm.configured ? { base_url: credentials.llm.base_url ?? '', llm_model: credentials.llm.llm_model ?? '' } : undefined}
                 />
               )}
             </div>

@@ -6,15 +6,16 @@ interface CredentialFormProps {
   provider: 'enable_banking' | 'gocardless' | 'llm'
   isConfigured: boolean
   onSaved: () => void
+  initialValues?: Record<string, string>
 }
 
-export default function CredentialForm({ provider, isConfigured, onSaved }: CredentialFormProps) {
+export default function CredentialForm({ provider, isConfigured, onSaved, initialValues }: CredentialFormProps) {
   const { t } = useTranslation()
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
 
   // Enable Banking fields
-  const [appId, setAppId] = useState('')
+  const [appId, setAppId] = useState(initialValues?.app_id ?? '')
   const [privateKey, setPrivateKey] = useState('')
 
   // GoCardless fields
@@ -22,9 +23,9 @@ export default function CredentialForm({ provider, isConfigured, onSaved }: Cred
   const [secretKey, setSecretKey] = useState('')
 
   // LLM fields
-  const [baseUrl, setBaseUrl] = useState('')
+  const [baseUrl, setBaseUrl] = useState(initialValues?.base_url ?? '')
   const [apiKey, setApiKey] = useState('')
-  const [llmModel, setLlmModel] = useState('')
+  const [llmModel, setLlmModel] = useState(initialValues?.llm_model ?? '')
 
   // Test connection
   const [isTesting, setIsTesting] = useState(false)
