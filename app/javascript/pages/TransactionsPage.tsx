@@ -115,17 +115,32 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">{t('transactions.title')}</h2>
+      {/* Page header — title + action */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold">{t('transactions.title')}</h2>
+        {llmConfigured && (
+          <button
+            className="btn btn-primary text-xs px-3 py-2"
+            onClick={() => setShowCategorizeModal(true)}
+          >
+            {t('transactions.categorize')}
+          </button>
+        )}
+      </div>
 
-      {/* Filter toolbar — sturdy strip */}
-      <div className="filter-bar">
+      {/* Search — full width, prominent */}
+      <div className="search-bar">
         <input
           type="text"
-          className="input flex-1 min-w-[12rem]"
+          className="input"
           placeholder={t('transactions.search_placeholder')}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+      </div>
+
+      {/* Filters — compact strip */}
+      <div className="filter-bar">
         <select
           className="input"
           value={accountId}
@@ -166,14 +181,6 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
         >
           {t('transactions.filter_uncategorized')}
         </button>
-        {llmConfigured && (
-          <button
-            className="btn btn-primary text-xs px-3 py-2"
-            onClick={() => setShowCategorizeModal(true)}
-          >
-            {t('transactions.categorize')}
-          </button>
-        )}
       </div>
 
       {/* Transaction list */}

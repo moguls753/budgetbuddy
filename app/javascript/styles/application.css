@@ -509,31 +509,44 @@
   .amount-positive { color: var(--color-accent); }
   .amount-negative { color: var(--color-text); }
 
-  /* Filter bar — toolbar strip */
+  /* Search bar — prominent, full-width */
+  .search-bar {
+    margin-bottom: 0;
+  }
+
+  .search-bar .input {
+    padding: 0.625rem 1rem;
+    font-size: 0.9375rem;
+    border-width: 2px;
+    border-bottom: none;
+  }
+
+  /* Filter bar — compact refinement strip */
   .filter-bar {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    background-color: var(--color-surface-raised);
+    padding: 0.5rem 0.75rem;
+    background-color: var(--color-surface-sunken);
     border: 2px solid var(--color-border);
     margin-bottom: 0;
   }
 
   .filter-bar .input {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
     border-width: 2px;
+    background-color: var(--color-surface-raised);
   }
 
   .filter-bar select.input {
-    min-width: 10rem;
+    min-width: 9rem;
     width: auto;
   }
 
   .filter-bar input[type="date"].input {
     width: auto;
-    min-width: 9rem;
+    min-width: 8.5rem;
   }
 
   /* Spinner — brutalist rotating square */
