@@ -106,9 +106,16 @@ All 5 tables created, models with validations/associations/scopes, factories, sp
 
 ---
 
-## Phase 2b: GoCardless Provider ← START HERE
+## Phase 2b: GoCardless Provider ✅ DONE
 
-Add GoCardless as second provider. Migration, model, API client, specs.
+12 specs passing (6 credential model + 6 client). Net::HTTP like EB, no Faraday. Token lifecycle in credential model (no separate token table, no `allocate` hack). Verified end-to-end against real GoCardless API (1,118 German institutions, Tomorrow Bank found).
+
+**What exists now:**
+- `app/models/go_cardless_credential.rb` — belongs_to :user, encrypts all 4 fields (secret_id, secret_key, access_token, refresh_token). Token lifecycle: `ensure_valid_token!` → `fetch_new_token!` or `refresh!`, called by client constructor.
+- `app/services/go_cardless/client.rb` — Net::HTTP wrapper for `https://bankaccountdata.gocardless.com/api/v2`. Public token endpoints (`obtain_token`, `refresh_token`) called by credential model. Error classes: `GoCardless::ApiError`, `GoCardless::RateLimitError`.
+- `app/models/bank_connection.rb` — added `provider` enum (`enable_banking`, `gocardless`)
+- `spec/support/go_cardless_helpers.rb` — shared GC response fixtures (institutions, requisition, balances, transactions, token responses)
+- Migration: `provider` column (default "enable_banking"), `requisition_id`, `link` on bank_connections. `go_cardless_credentials` table.
 
 ### Migration:
 - Add `provider` (string, not null, default "enable_banking") to `bank_connections`
@@ -162,7 +169,17 @@ Add GoCardless as second provider. Migration, model, API client, specs.
 
 ---
 
-## Phase 3: Controllers & Routes
+## Phase 3: Controllers & Routes ✅ DONE
+
+20 specs passing (5 credentials + 3 institutions + 6 bank_connections + 6 categories). Both providers supported in create/callback flows. Credential check before connection save (no orphaned records). Duplicate credential guard (409 Conflict). Stub `SyncAccountsJob` for Phase 4.
+
+**What exists now:**
+- `app/controllers/api/v1/credentials_controller.rb` — show (both providers' status), create (with duplicate guard), update. Provider param dispatches to EB or GC credential model.
+- `app/controllers/api/v1/institutions_controller.rb` — list banks by country+provider. Mocks client in specs.
+- `app/controllers/api/v1/bank_connections_controller.rb` — full dual-provider flow: create (checks credentials first, then saves, then calls provider API), callback (EB code→session / GC requisition→accounts), destroy (cleans up EB session), sync (enqueues job). Error params in callback handled.
+- `app/controllers/api/v1/categories_controller.rb` — CRUD scoped to current user.
+- `app/jobs/sync_accounts_job.rb` — stub, Phase 4 fills in logic.
+- `config/routes.rb` — credentials, institutions, bank_connections (with callback/sync members), categories, dashboard.
 
 ### New files:
 - `app/controllers/api/v1/credentials_controller.rb` — show/create/update for BOTH provider types. Single endpoint, provider param determines which credential model.
@@ -199,26 +216,21 @@ Add GoCardless as second provider. Migration, model, API client, specs.
 
 ---
 
-## Phase 4: Background Sync Jobs
+## Phase 4: Background Sync Jobs ✅ DONE
 
-### New files:
-- `app/jobs/sync_accounts_job.rb` — for a single BankConnection:
-  - Skip if not active (mark expired if needed)
-  - **Dispatch by provider:** `sync_enable_banking(bc, client)` vs `sync_go_cardless(bc, client)`
-  - Per account: fetch balances, fetch transactions
-  - EB: continuation_key pagination, sign amounts (negate DBIT), join remittance_information array
-  - GC: booked+pending merge, amounts pre-signed, remittanceInformationUnstructured is string
-  - Both: upsert via `find_or_initialize_by(transaction_id:)`
-  - Incremental: `date_from` = last tx booking_date - 2 days. Initial: 90 days back.
-  - Per-account error isolation: rescue per account, log error, continue to next
-  - `retry_on RateLimitError, wait: 6.hours, attempts: 3` (works for both EB and GC rate limits)
-- `app/jobs/sync_all_accounts_job.rb` — enqueues per-connection jobs for all active connections
+4 specs passing. Dual-provider dispatch, amount signing, dedup, incremental sync, expiry guard. Error classes extracted to own files for Zeitwerk autoloading. Status field converted to enum.
+
+**What exists now:**
+- `app/jobs/sync_accounts_job.rb` — per BankConnection: skips non-authorized, marks expired EB connections, dispatches by provider. EB: continuation_key pagination, signs amounts (negate DBIT), joins remittance array. GC: fetches account details when missing, pre-signed amounts. Both: upserts via `find_or_initialize_by(transaction_id:)`, updates balances, incremental sync (last booking_date - 2 days, initial 90 days). `retry_on RateLimitError` for both providers.
+- `app/jobs/sync_all_accounts_job.rb` — enqueues `SyncAccountsJob` for each active connection
 - `config/recurring.yml` — `SyncAllAccountsJob` every 6 hours
-- `spec/jobs/` — one spec per job
+- `app/services/{enable_banking,go_cardless}/{api_error,rate_limit_error}.rb` — extracted from client files for Zeitwerk
+- `app/models/bank_connection.rb` — `status` converted to enum (gives `authorized?`, `pending?`, `expired?`, `error?` for free), `active` scope handles GC nil `valid_until`
+- `spec/jobs/sync_accounts_job_spec.rb` — 4 tests (EB signed amounts, GC pre-signed amounts, dedup, expired skip)
 
 ---
 
-## Phase 5: Data API Endpoints
+## Phase 5: Data API Endpoints ← START HERE
 
 Provider-agnostic. All data comes from the same tables regardless of provider.
 

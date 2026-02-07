@@ -28,6 +28,7 @@ FactoryBot.define do
     trait :gocardless do
       provider { "gocardless" }
       session_id { nil }
+      valid_until { nil }
       requisition_id { SecureRandom.uuid }
       institution_id { "TOMORROW_SOLDE1S" }
       institution_name { "Tomorrow" }
