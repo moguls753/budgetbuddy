@@ -102,6 +102,8 @@ export default {
     type_sepa_credit_transfer: 'Credit Transfer',
     type_card_payment: 'Card Payment',
     type_standing_order: 'Standing Order',
+    categorize_unmatched_hint: "Some transactions didn't match any category.",
+    categorize_add_categories: 'Add new categories',
   },
   accounts: {
     title: 'Accounts',
@@ -129,6 +131,14 @@ export default {
     delete_confirm: 'Delete this category? Transactions will become uncategorized.',
     confirm_short: 'Are you sure?',
     create_defaults: 'Create Default Categories',
+    suggest: 'Suggest Categories',
+    suggest_title: 'AI Category Suggestions',
+    suggest_description: 'Based on your uncategorized transactions, these new categories might be useful.',
+    suggest_none: 'No new categories to suggest. Your existing categories cover your transactions well.',
+    suggest_creating: 'Creating categories...',
+    suggest_done: '{{count}} categories created.',
+    suggesting: 'Analyzing transactions...',
+    suggest_wait: 'The LLM is reviewing your uncategorized transactions.',
   },
   recurring: {
     title: 'Recurring',

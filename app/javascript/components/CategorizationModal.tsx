@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '../lib/api'
+import type { View } from './SidebarNav'
 
 interface Props {
   onClose: (didCategorize: boolean) => void
+  onNavigate?: (view: View) => void
 }
 
 type Step = 'loading' | 'confirm' | 'running' | 'done' | 'error'
 
-export default function CategorizationModal({ onClose }: Props) {
+export default function CategorizationModal({ onClose, onNavigate }: Props) {
   const { t } = useTranslation()
   const [step, setStep] = useState<Step>('loading')
   const [count, setCount] = useState(0)
@@ -123,6 +125,18 @@ export default function CategorizationModal({ onClose }: Props) {
                           <span className="mono text-sm font-semibold text-text-muted shrink-0">{count}</span>
                         </div>
                       ))}
+                  </div>
+                )}
+
+                {(results.total - results.categorized - results.failed) > 0 && onNavigate && (
+                  <div className="border-t-2 border-border pt-3 mb-4">
+                    <p className="text-xs text-text-muted mb-2">{t('transactions.categorize_unmatched_hint')}</p>
+                    <button
+                      className="link text-sm cursor-pointer"
+                      onClick={() => { onClose(didCategorize); onNavigate('categories') }}
+                    >
+                      {t('transactions.categorize_add_categories')} →
+                    </button>
                   </div>
                 )}
               </>

@@ -49,4 +49,35 @@ RSpec.describe "Api::V1::Categories", type: :request do
     get api_v1_categories_path, as: :json
     expect(response.parsed_body).to be_empty
   end
+
+  describe "POST /api/v1/categories/suggest" do
+    it "returns suggestions when LLM is configured" do
+      create(:llm_credential, user: user)
+      bank_connection = create(:bank_connection, user: user)
+      account = create(:account, bank_connection: bank_connection)
+      create(:transaction_record, account: account, remittance: "Netflix")
+
+      suggestions = ["Streaming", "Transport"]
+      body = { choices: [{ message: { content: suggestions.to_json } }] }
+      response_double = instance_double(Net::HTTPResponse, code: "200", body: body.to_json)
+      http = instance_double(Net::HTTP)
+      allow(Net::HTTP).to receive(:new).and_return(http)
+      allow(http).to receive(:use_ssl=)
+      allow(http).to receive(:open_timeout=)
+      allow(http).to receive(:read_timeout=)
+      allow(http).to receive(:post).and_return(response_double)
+
+      post suggest_api_v1_categories_path, params: { locale: "en" }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body["suggestions"]).to include("Streaming", "Transport")
+    end
+
+    it "returns 422 when LLM is not configured" do
+      post suggest_api_v1_categories_path, params: { locale: "en" }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.parsed_body["error"]).to eq("LLM not configured")
+    end
+  end
 end

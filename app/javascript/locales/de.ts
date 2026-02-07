@@ -102,6 +102,8 @@ export default {
     type_sepa_credit_transfer: 'Überweisung',
     type_card_payment: 'Kartenzahlung',
     type_standing_order: 'Dauerauftrag',
+    categorize_unmatched_hint: 'Einige Transaktionen passen zu keiner Kategorie.',
+    categorize_add_categories: 'Neue Kategorien anlegen',
   },
   accounts: {
     title: 'Konten',
@@ -129,6 +131,14 @@ export default {
     delete_confirm: 'Kategorie löschen? Transaktionen werden unkategorisiert.',
     confirm_short: 'Sicher?',
     create_defaults: 'Standardkategorien erstellen',
+    suggest: 'Kategorien vorschlagen',
+    suggest_title: 'KI-Kategorievorschläge',
+    suggest_description: 'Basierend auf deinen unkategorisierten Transaktionen könnten diese neuen Kategorien nützlich sein.',
+    suggest_none: 'Keine neuen Kategorien vorzuschlagen. Deine bestehenden Kategorien decken deine Transaktionen gut ab.',
+    suggest_creating: 'Kategorien werden erstellt...',
+    suggest_done: '{{count}} Kategorien erstellt.',
+    suggesting: 'Transaktionen werden analysiert...',
+    suggest_wait: 'Das LLM prüft deine unkategorisierten Transaktionen.',
   },
   recurring: {
     title: 'Wiederkehrend',

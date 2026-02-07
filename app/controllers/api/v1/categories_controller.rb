@@ -31,6 +31,14 @@ module Api
         render json: Current.user.categories.order(:name).map { |c| category_json(c) }
       end
 
+      def suggest
+        return render json: { error: "LLM not configured" }, status: :unprocessable_content unless Current.user.llm_credential
+
+        locale = params.fetch(:locale, :en).to_sym
+        result = CategorySuggester.new(Current.user, locale:).suggest
+        render json: result
+      end
+
       def destroy
         category = Current.user.categories.find(params[:id])
         category.destroy!

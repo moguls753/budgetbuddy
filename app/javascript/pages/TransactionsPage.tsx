@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { api } from '../lib/api'
 import { formatAmount, formatDate, transactionDisplayName } from '../lib/format'
 import type { Transaction, PaginationMeta, Account, Category } from '../lib/types'
+import type { View } from '../components/SidebarNav'
 import CategorizationModal from '../components/CategorizationModal'
 
-export default function TransactionsPage() {
+export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: View) => void }) {
   const { t } = useTranslation()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [meta, setMeta] = useState<PaginationMeta>({ page: 1, per: 50, total: 0, total_pages: 0 })
@@ -323,7 +324,7 @@ export default function TransactionsPage() {
         </div>
       )}
       {showCategorizeModal && (
-        <CategorizationModal onClose={(didCategorize) => {
+        <CategorizationModal onNavigate={onNavigate} onClose={(didCategorize) => {
           setShowCategorizeModal(false)
           if (didCategorize) setRetryKey(k => k + 1)
         }} />

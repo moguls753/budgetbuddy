@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       resources :categories, only: %i[ index create update destroy ] do
         collection do
           post :create_defaults
+          post :suggest
         end
       end
       resources :accounts, only: %i[ index show ]

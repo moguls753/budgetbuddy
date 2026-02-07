@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '../lib/api'
 import type { Category } from '../lib/types'
+import type { View } from '../components/SidebarNav'
+import CategorySuggestionModal from '../components/CategorySuggestionModal'
 
-export default function CategoriesPage() {
+export default function CategoriesPage({ onNavigate }: { onNavigate?: (view: View) => void }) {
   const { t, i18n } = useTranslation()
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -15,6 +17,8 @@ export default function CategoriesPage() {
   const [error, setError] = useState('')
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [isCreatingDefaults, setIsCreatingDefaults] = useState(false)
+  const [llmConfigured, setLlmConfigured] = useState(false)
+  const [showSuggestModal, setShowSuggestModal] = useState(false)
   const addRef = useRef<HTMLInputElement>(null)
   const editRef = useRef<HTMLInputElement>(null)
 
@@ -32,7 +36,12 @@ export default function CategoriesPage() {
     }
   }
 
-  useEffect(() => { fetchCategories() }, [])
+  useEffect(() => {
+    fetchCategories()
+    api('/api/v1/credentials').then(r => r.ok ? r.json() : null).then(data => {
+      if (data?.llm?.configured) setLlmConfigured(true)
+    }).catch(() => {})
+  }, [])
 
   useEffect(() => { if (isAdding) addRef.current?.focus() }, [isAdding])
   useEffect(() => { if (editingId) editRef.current?.focus() }, [editingId])
@@ -126,11 +135,18 @@ export default function CategoriesPage() {
     <div className="p-6 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">{t('categories.title')}</h2>
-        {!isAdding && (
-          <button className="btn btn-primary text-sm" onClick={() => { setIsAdding(true); setEditingId(null) }}>
-            {t('categories.add')}
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {llmConfigured && (
+            <button className="btn btn-ghost text-sm" onClick={() => setShowSuggestModal(true)}>
+              {t('categories.suggest')}
+            </button>
+          )}
+          {!isAdding && (
+            <button className="btn btn-primary text-sm" onClick={() => { setIsAdding(true); setEditingId(null) }}>
+              {t('categories.add')}
+            </button>
+          )}
+        </div>
       </div>
 
       {error && <div className="error-message mb-4">{error}</div>}
@@ -234,6 +250,12 @@ export default function CategoriesPage() {
             </div>
           ))}
         </div>
+      )}
+      {showSuggestModal && (
+        <CategorySuggestionModal onClose={(didCreate) => {
+          setShowSuggestModal(false)
+          if (didCreate) fetchCategories()
+        }} />
       )}
     </div>
   )
