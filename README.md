@@ -15,14 +15,10 @@ Most personal finance tools are either closed-source SaaS (your data on someone 
 
 ## Features
 
-- **Bank sync** — Connect bank accounts via Enable Banking or GoCardless Open Banking APIs. OAuth flow, automatic transaction import, balance tracking.
-- **Transaction management** — Search, filter by account/category/date, pagination. Debounced search, responsive design.
-- **AI categorization** — Categorize transactions using LLMs. Works with cloud providers (Google Gemini) or local models via any OpenAI-compatible API (LM Studio, Ollama, llama.cpp, etc.).
-- **Categories** — Full CRUD. Inline editing with keyboard shortcuts.
-- **Dashboard** — Total balance, monthly income/expenses, recent transactions at a glance.
-- **Multi-language** — English and German. Locale-aware number and date formatting.
-- **Dark mode** — System-aware with manual toggle.
-- **Deployment** — Kamal-ready with Docker. SQLite means zero database infrastructure.
+- **Automatic bank sync** — Connect 2,500+ European banks via Open Banking (Enable Banking or GoCardless). Transactions and balances sync in the background.
+- **AI categorization** — Classify transactions using any OpenAI-compatible API, including local models (LM Studio, Ollama, llama.cpp). Only remittance text is sent — never amounts or account details.
+- **Transaction management** — Search, filter by account, category, date range. Paginated, responsive.
+- **Dashboard** — Total balance, monthly income and expenses, recent transactions at a glance.
 
 ## Tech Stack
 
