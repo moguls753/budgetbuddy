@@ -35,10 +35,10 @@ export default function SettingsPage() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">{t('settings.title')}</h2>
+      <h2 className="text-2xl font-bold mb-8">{t('settings.title')}</h2>
 
       {/* Language */}
-      <div className="mb-6">
+      <div className="mb-8">
         <h3 className="text-base font-bold">{t('settings.language')}</h3>
         <p className="text-xs text-text-muted mt-0.5 mb-2">{t('settings.language_description')}</p>
         <div className="card">
@@ -49,7 +49,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Credentials */}
-      <div className="mb-6">
+      <div className="mb-8">
         <h3 className="text-base font-bold">{t('settings.credentials')}</h3>
         <p className="text-xs text-text-muted mt-0.5 mb-2">{t('settings.credentials_description')}</p>
         {isLoading ? (
