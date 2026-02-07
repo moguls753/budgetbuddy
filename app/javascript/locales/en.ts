@@ -79,6 +79,8 @@ export default {
     next: 'Next',
     no_results: 'No transactions match your filters',
     clear_filters: 'Clear filters',
+    categorize: 'Categorize',
+    categorizing: 'Categorizing...',
   },
   accounts: {
     title: 'Accounts',

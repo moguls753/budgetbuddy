@@ -26,10 +26,17 @@ export default function TransactionsPage() {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [categories, setCategories] = useState<Category[]>([])
 
-  // Load dropdown data once
+  // LLM categorization
+  const [llmConfigured, setLlmConfigured] = useState(false)
+  const [isCategorizing, setIsCategorizing] = useState(false)
+
+  // Load dropdown data + LLM status once
   useEffect(() => {
     api('/api/v1/accounts').then(r => r.ok ? r.json() : []).then(setAccounts).catch(() => {})
     api('/api/v1/categories').then(r => r.ok ? r.json() : []).then(setCategories).catch(() => {})
+    api('/api/v1/credentials').then(r => r.ok ? r.json() : null).then(data => {
+      if (data?.llm?.configured) setLlmConfigured(true)
+    }).catch(() => {})
   }, [])
 
   // Debounce search
@@ -78,6 +85,15 @@ export default function TransactionsPage() {
   }, [debouncedSearch, accountId, categoryId, dateFrom, dateTo, uncategorized, page, retryKey])
 
   const hasFilters = search || accountId || categoryId || dateFrom || dateTo || uncategorized
+
+  const handleCategorize = async () => {
+    setIsCategorizing(true)
+    try {
+      const r = await api('/api/v1/transactions/categorize', { method: 'POST' })
+      if (r.ok) setRetryKey(k => k + 1)
+    } catch {}
+    finally { setIsCategorizing(false) }
+  }
 
   const clearFilters = () => {
     setSearch('')
@@ -142,6 +158,16 @@ export default function TransactionsPage() {
         >
           {t('transactions.filter_uncategorized')}
         </button>
+        {llmConfigured && (
+          <button
+            className="btn btn-primary text-xs"
+            style={{ padding: '0.5rem 0.75rem' }}
+            onClick={handleCategorize}
+            disabled={isCategorizing}
+          >
+            {isCategorizing ? t('transactions.categorizing') : t('transactions.categorize')}
+          </button>
+        )}
       </div>
 
       {/* Transaction list */}

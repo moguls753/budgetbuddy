@@ -38,4 +38,20 @@ RSpec.describe "Api::V1::Transactions", type: :request do
     get api_v1_transactions_path, params: { search: "REWE" }, as: :json
     expect(response.parsed_body["transactions"].length).to eq(1)
   end
+
+  describe "POST /categorize" do
+    it "enqueues job when LLM is configured" do
+      create(:llm_credential, user: user)
+
+      expect { post categorize_api_v1_transactions_path, as: :json }
+        .to have_enqueued_job(CategorizeTransactionsJob).with(user.id)
+
+      expect(response).to have_http_status(:accepted)
+    end
+
+    it "returns 422 when LLM is not configured" do
+      post categorize_api_v1_transactions_path, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
 end

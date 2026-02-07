@@ -22,7 +22,9 @@ Rails.application.routes.draw do
         end
       end
       resources :accounts, only: %i[ index show ]
-      resources :transactions, only: %i[ index ]
+      resources :transactions, only: %i[ index ] do
+        post :categorize, on: :collection
+      end
       resource :dashboard, only: %i[ show ]
     end
   end

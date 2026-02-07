@@ -28,6 +28,6 @@ RSpec.describe "Api::V1::Institutions", type: :request do
 
   it "returns 422 when credentials not configured" do
     get api_v1_institutions_path, params: { provider: "enable_banking", country: "DE" }, as: :json
-    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response).to have_http_status(:unprocessable_content)
   end
 end

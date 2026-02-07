@@ -11,7 +11,7 @@ RSpec.describe "Users", type: :request do
 
     it "rejects invalid signup" do
       post user_path, params: { email_address: "", password: "short" }, as: :json
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.parsed_body["errors"]).to be_present
     end
   end

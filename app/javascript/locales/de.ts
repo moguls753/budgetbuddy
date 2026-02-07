@@ -79,6 +79,8 @@ export default {
     next: 'Weiter',
     no_results: 'Keine Transaktionen gefunden',
     clear_filters: 'Filter zurücksetzen',
+    categorize: 'Kategorisieren',
+    categorizing: 'Kategorisiere...',
   },
   accounts: {
     title: 'Konten',

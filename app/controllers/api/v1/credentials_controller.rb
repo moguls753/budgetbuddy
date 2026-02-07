@@ -26,13 +26,13 @@ module Api
           return render json: { error: "Already configured" }, status: :conflict if Current.user.llm_credential
           credential = Current.user.build_llm_credential(llm_params)
         else
-          return render json: { error: "Invalid provider" }, status: :unprocessable_entity
+          return render json: { error: "Invalid provider" }, status: :unprocessable_content
         end
 
         if credential.save
           render json: { provider: params[:provider], configured: true }, status: :created
         else
-          render json: { errors: credential.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: credential.errors.full_messages }, status: :unprocessable_content
         end
       end
 
@@ -51,19 +51,19 @@ module Api
           return render json: { error: "Not configured" }, status: :not_found unless credential
           credential.assign_attributes(llm_params)
         else
-          return render json: { error: "Invalid provider" }, status: :unprocessable_entity
+          return render json: { error: "Invalid provider" }, status: :unprocessable_content
         end
 
         if credential.save
           render json: { provider: params[:provider], configured: true }
         else
-          render json: { errors: credential.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: credential.errors.full_messages }, status: :unprocessable_content
         end
       end
 
       def test
         credential = Current.user.llm_credential
-        return render json: { status: "error", message: "LLM not configured" }, status: :unprocessable_entity unless credential
+        return render json: { status: "error", message: "LLM not configured" }, status: :unprocessable_content unless credential
 
         uri = URI("#{credential.base_url.chomp("/")}/chat/completions")
         headers = { "Content-Type" => "application/json" }

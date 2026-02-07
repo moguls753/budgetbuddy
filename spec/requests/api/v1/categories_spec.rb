@@ -20,7 +20,7 @@ RSpec.describe "Api::V1::Categories", type: :request do
   it "rejects duplicate name" do
     create(:category, user: user, name: "Transport")
     post api_v1_categories_path, params: { category: { name: "Transport" } }, as: :json
-    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response).to have_http_status(:unprocessable_content)
   end
 
   it "updates a category" do

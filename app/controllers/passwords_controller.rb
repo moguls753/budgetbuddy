@@ -34,7 +34,7 @@ class PasswordsController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity }
+        format.json { render json: { errors: @user.errors.full_messages }, status: :unprocessable_content }
         format.html { redirect_to edit_password_path(params[:token]), alert: "Passwords did not match." }
       end
     end
@@ -46,7 +46,7 @@ class PasswordsController < ApplicationController
     @user = User.find_by_password_reset_token!(params[:token])
   rescue ActiveSupport::MessageVerifier::InvalidSignature
     respond_to do |format|
-      format.json { render json: { error: "Password reset link is invalid or has expired." }, status: :unprocessable_entity }
+      format.json { render json: { error: "Password reset link is invalid or has expired." }, status: :unprocessable_content }
       format.html { redirect_to new_password_path, alert: "Password reset link is invalid or has expired." }
     end
   end

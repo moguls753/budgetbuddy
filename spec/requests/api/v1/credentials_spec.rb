@@ -36,7 +36,7 @@ RSpec.describe "Api::V1::Credentials", type: :request do
 
     it "rejects missing params" do
       post api_v1_credentials_path, params: { provider: "enable_banking", credentials: { app_id: "" } }, as: :json
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

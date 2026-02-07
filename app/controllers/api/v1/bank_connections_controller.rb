@@ -13,7 +13,7 @@ module Api
 
       def create
         credential = provider_credential(params[:provider])
-        return render json: { error: "#{params[:provider]} not configured" }, status: :unprocessable_entity unless credential
+        return render json: { error: "#{params[:provider]} not configured" }, status: :unprocessable_content unless credential
 
         bc = Current.user.bank_connections.build(
           provider: params[:provider],
@@ -24,7 +24,7 @@ module Api
         )
 
         unless bc.save
-          return render json: { errors: bc.errors.full_messages }, status: :unprocessable_entity
+          return render json: { errors: bc.errors.full_messages }, status: :unprocessable_content
         end
 
         case bc.provider
