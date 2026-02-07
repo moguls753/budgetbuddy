@@ -14,7 +14,8 @@ export default function LanguageSwitcher() {
         <button
           key={code}
           onClick={() => i18n.changeLanguage(code)}
-          className={i18n.language === code ? 'btn btn-primary' : 'btn btn-ghost'}
+          className={`btn text-sm ${i18n.language === code ? 'btn-primary' : 'btn-ghost'}`}
+          style={{ padding: '0.5rem 1rem' }}
         >
           {label}
         </button>

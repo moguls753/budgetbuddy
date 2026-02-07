@@ -55,7 +55,7 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       {/* Balance hero — the visual anchor */}
-      <div className="card p-8 mb-8 row-enter">
+      <div className="card p-8 mb-8">
         <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-text-muted">
           {t('dashboard.total_balance')}
         </p>
@@ -65,7 +65,7 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
       </div>
 
       {/* Stats strip — three numbers in a row */}
-      <div className="card mb-8 grid grid-cols-1 md:grid-cols-3 row-enter" style={{ animationDelay: '0.05s' }}>
+      <div className="card mb-8 grid grid-cols-1 md:grid-cols-3">
         <div className="p-6 border-b-2 md:border-b-0 md:border-r-2 border-border">
           <p className="text-xs font-semibold uppercase tracking-wider mb-2 text-text-muted">
             {t('dashboard.income_this_month')}
@@ -96,7 +96,7 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
 
       {/* Recent transactions — ledger entries */}
       {hasData ? (
-        <div className="card row-enter" style={{ animationDelay: '0.14s' }}>
+        <div className="card">
           <div className="flex items-center justify-between px-4 py-3 border-b-2 border-border">
             <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
               {t('dashboard.recent_title')}
@@ -113,8 +113,7 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
             return (
               <div
                 key={tx.id}
-                className="tx-row row-enter"
-                style={{ animationDelay: `${0.16 + i * 0.03}s` }}
+                className="tx-row"
               >
                 <div className="min-w-0 flex-1 mr-4">
                   <p className="font-medium text-sm truncate">
@@ -143,7 +142,7 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
           })}
         </div>
       ) : (
-        <div className="card p-12 text-center row-enter" style={{ animationDelay: '0.14s' }}>
+        <div className="card p-12 text-center">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4 text-text-muted">
             <line x1="12" y1="1" x2="12" y2="23" />
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />

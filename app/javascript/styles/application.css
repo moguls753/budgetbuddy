@@ -388,18 +388,7 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes row-enter {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @layer components {
-  /* Row entrance animation — ledger entries appearing */
-  .row-enter {
-    opacity: 0;
-    animation: row-enter 0.2s ease forwards;
-  }
-
   /* Transaction row — interactive ledger line */
   .tx-row {
     display: flex;
@@ -418,7 +407,7 @@
     background-color: var(--color-surface-sunken);
   }
 
-  /* Status indicators */
+  /* Status badges — bordered, for inline labels in lists */
   .badge {
     display: inline-flex;
     align-items: center;
@@ -443,6 +432,37 @@
   }
 
   .badge-muted {
+    color: var(--color-text-muted);
+  }
+
+  /* Status dot — non-interactive indicator */
+  .status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-family: var(--font-display);
+  }
+
+  .status-dot::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .status-dot-active::before {
+    background-color: var(--color-accent);
+  }
+
+  .status-dot-active {
+    color: var(--color-accent);
+  }
+
+  .status-dot-inactive {
     color: var(--color-text-muted);
   }
 
@@ -485,12 +505,5 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    animation: row-enter 0.2s ease forwards;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .row-enter { animation: none; opacity: 1; }
-    .tx-row { transition: none; }
-    .notification-bar { animation: none; }
   }
 }

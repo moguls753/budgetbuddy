@@ -144,7 +144,7 @@ export default function ConnectBankFlow({ credentials }: ConnectBankFlowProps) {
 
   if (step === 'idle') {
     return (
-      <button className="btn btn-primary text-sm" onClick={startFlow}>
+      <button className="btn btn-primary text-sm" style={{ padding: '0.5rem 1rem' }} onClick={startFlow}>
         {t('settings.connect_bank')}
       </button>
     )

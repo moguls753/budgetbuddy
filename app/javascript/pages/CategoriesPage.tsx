@@ -113,7 +113,7 @@ export default function CategoriesPage() {
       {error && <div className="error-message mb-4">{error}</div>}
 
       {categories.length === 0 && !isAdding ? (
-        <div className="card p-12 text-center row-enter">
+        <div className="card p-12 text-center">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4 text-text-muted">
             <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
             <line x1="7" y1="7" x2="7.01" y2="7" />
@@ -125,7 +125,7 @@ export default function CategoriesPage() {
         <div className="card">
           {/* Add row */}
           {isAdding && (
-            <div className="flex items-center gap-2 px-4 py-3 border-b-2 border-border row-enter">
+            <div className="flex items-center gap-2 px-4 py-3 border-b-2 border-border">
               <input
                 ref={addRef}
                 className="input flex-1"
@@ -151,8 +151,7 @@ export default function CategoriesPage() {
           {categories.map((cat, i) => (
             <div
               key={cat.id}
-              className="flex items-center justify-between px-4 py-3 border-b-2 border-border last:border-b-0 row-enter"
-              style={{ animationDelay: `${i * 0.02}s` }}
+              className="flex items-center justify-between px-4 py-3 border-b-2 border-border last:border-b-0"
             >
               {editingId === cat.id ? (
                 <div className="flex items-center gap-2 flex-1">

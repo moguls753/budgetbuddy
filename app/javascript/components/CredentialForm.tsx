@@ -111,7 +111,7 @@ export default function CredentialForm({ provider, isConfigured, onSaved }: Cred
 
       {error && <div className="error-message">{error}</div>}
 
-      <button className="btn btn-primary text-sm self-start" disabled={isSaving}>
+      <button className="btn btn-primary text-sm self-start" style={{ padding: '0.5rem 1rem' }} disabled={isSaving}>
         {isSaving ? t('settings.saving') : t('settings.save_credentials')}
       </button>
     </form>

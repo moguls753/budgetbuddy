@@ -10,13 +10,21 @@ export default function SettingsPage() {
   const { t } = useTranslation()
   const [credentials, setCredentials] = useState<CredentialsStatus | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [expandedProvider, setExpandedProvider] = useState<string | null>(null)
 
-  const fetchCredentials = () => {
-    api('/api/v1/credentials')
-      .then(async r => { if (r.ok) setCredentials(await r.json()) })
-      .catch(() => {})
-      .finally(() => setIsLoading(false))
+  const fetchCredentials = async () => {
+    setIsLoading(true)
+    setError(false)
+    try {
+      const r = await api('/api/v1/credentials')
+      if (r.ok) setCredentials(await r.json())
+      else setError(true)
+    } catch {
+      setError(true)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => { fetchCredentials() }, [])
@@ -30,45 +38,53 @@ export default function SettingsPage() {
       <h2 className="text-2xl font-bold mb-6">{t('settings.title')}</h2>
 
       {/* Language */}
-      <div className="card p-6 mb-4 row-enter">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1">
-          {t('settings.language')}
-        </h3>
-        <p className="text-sm text-text-muted mb-4">{t('settings.language_description')}</p>
-        <LanguageSwitcher />
+      <div className="card mb-4">
+        <div className="px-5 py-4 border-b-2 border-border">
+          <h3 className="text-sm font-bold">{t('settings.language')}</h3>
+          <p className="text-xs text-text-muted mt-0.5">{t('settings.language_description')}</p>
+        </div>
+        <div className="px-5 py-4">
+          <LanguageSwitcher />
+        </div>
       </div>
 
       {/* Credentials */}
-      <div className="card mb-4 row-enter" style={{ animationDelay: '0.05s' }}>
-        <div className="px-4 py-3 border-b-2 border-border">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-            {t('settings.credentials')}
-          </h3>
+      <div className="card mb-4">
+        <div className="px-5 py-4 border-b-2 border-border">
+          <h3 className="text-sm font-bold">{t('settings.credentials')}</h3>
           <p className="text-xs text-text-muted mt-0.5">{t('settings.credentials_description')}</p>
         </div>
 
         {isLoading ? (
-          <div className="p-4 text-sm text-text-muted">{t('common.loading')}</div>
+          <div className="px-5 py-4 text-sm text-text-muted">{t('common.loading')}</div>
+        ) : error ? (
+          <div className="px-5 py-4">
+            <div className="error-message flex items-center justify-between">
+              <span>{t('common.load_error')}</span>
+              <button className="btn-icon text-xs" onClick={fetchCredentials}>{t('common.retry')}</button>
+            </div>
+          </div>
         ) : credentials && (
           <>
             {/* Enable Banking */}
-            <div className="px-4 py-3 border-b-2 border-border">
+            <div className="px-5 py-4 border-b-2 border-border">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold">{t('settings.enable_banking')}</p>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <p className="text-sm font-semibold">{t('settings.enable_banking')}</p>
+                    <span className={`status-dot ${credentials.enable_banking.configured ? 'status-dot-active' : 'status-dot-inactive'}`}>
+                      {credentials.enable_banking.configured ? t('settings.configured') : t('settings.not_configured')}
+                    </span>
+                  </div>
                   <p className="text-xs text-text-muted mt-0.5">{t('settings.enable_banking_description')}</p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0 ml-3">
-                  <span className={`badge ${credentials.enable_banking.configured ? 'badge-accent' : 'badge-muted'}`}>
-                    {credentials.enable_banking.configured ? t('settings.configured') : t('settings.not_configured')}
-                  </span>
-                  <button
-                    className="btn-icon text-xs"
-                    onClick={() => toggleProvider('enable_banking')}
-                  >
-                    {credentials.enable_banking.configured ? t('settings.update_credentials') : t('settings.configure')}
-                  </button>
-                </div>
+                <button
+                  className="btn btn-ghost text-sm shrink-0 ml-4"
+                  style={{ padding: '0.5rem 1rem' }}
+                  onClick={() => toggleProvider('enable_banking')}
+                >
+                  {credentials.enable_banking.configured ? t('settings.update_credentials') : t('settings.configure')}
+                </button>
               </div>
               {expandedProvider === 'enable_banking' && (
                 <CredentialForm
@@ -80,23 +96,24 @@ export default function SettingsPage() {
             </div>
 
             {/* GoCardless */}
-            <div className="px-4 py-3">
+            <div className="px-5 py-4">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold">{t('settings.gocardless')}</p>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <p className="text-sm font-semibold">{t('settings.gocardless')}</p>
+                    <span className={`status-dot ${credentials.gocardless.configured ? 'status-dot-active' : 'status-dot-inactive'}`}>
+                      {credentials.gocardless.configured ? t('settings.configured') : t('settings.not_configured')}
+                    </span>
+                  </div>
                   <p className="text-xs text-text-muted mt-0.5">{t('settings.gocardless_description')}</p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0 ml-3">
-                  <span className={`badge ${credentials.gocardless.configured ? 'badge-accent' : 'badge-muted'}`}>
-                    {credentials.gocardless.configured ? t('settings.configured') : t('settings.not_configured')}
-                  </span>
-                  <button
-                    className="btn-icon text-xs"
-                    onClick={() => toggleProvider('gocardless')}
-                  >
-                    {credentials.gocardless.configured ? t('settings.update_credentials') : t('settings.configure')}
-                  </button>
-                </div>
+                <button
+                  className="btn btn-ghost text-sm shrink-0 ml-4"
+                  style={{ padding: '0.5rem 1rem' }}
+                  onClick={() => toggleProvider('gocardless')}
+                >
+                  {credentials.gocardless.configured ? t('settings.update_credentials') : t('settings.configure')}
+                </button>
               </div>
               {expandedProvider === 'gocardless' && (
                 <CredentialForm
@@ -111,12 +128,14 @@ export default function SettingsPage() {
       </div>
 
       {/* Connect Bank */}
-      <div className="card p-6 row-enter" style={{ animationDelay: '0.1s' }}>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1">
-          {t('settings.connect_bank')}
-        </h3>
-        <p className="text-xs text-text-muted mb-4">{t('settings.connect_bank_description')}</p>
-        {credentials && <ConnectBankFlow credentials={credentials} />}
+      <div className="card">
+        <div className="px-5 py-4 border-b-2 border-border">
+          <h3 className="text-sm font-bold">{t('settings.connect_bank')}</h3>
+          <p className="text-xs text-text-muted mt-0.5">{t('settings.connect_bank_description')}</p>
+        </div>
+        <div className="px-5 py-4">
+          {credentials && <ConnectBankFlow credentials={credentials} />}
+        </div>
       </div>
     </div>
   )

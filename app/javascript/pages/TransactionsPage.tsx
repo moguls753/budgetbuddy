@@ -93,7 +93,7 @@ export default function TransactionsPage() {
       <h2 className="text-2xl font-bold mb-6">{t('transactions.title')}</h2>
 
       {/* Filter toolbar — sturdy strip */}
-      <div className="filter-bar row-enter">
+      <div className="filter-bar">
         <input
           type="text"
           className="input flex-1 min-w-[12rem]"
@@ -178,8 +178,7 @@ export default function TransactionsPage() {
               return (
                 <div
                   key={tx.id}
-                  className={`tx-row${i < 15 ? ' row-enter' : ''}`}
-                  style={i < 15 ? { animationDelay: `${i * 0.02}s` } : undefined}
+                  className="tx-row"
                 >
                   {/* Date */}
                   <span className="mono text-xs text-text-muted w-24 shrink-0 hidden sm:block">

@@ -123,7 +123,7 @@ export default function AccountsPage({ onNavigate }: AccountsPageProps) {
       </div>
 
       {connections.length === 0 ? (
-        <div className="card p-12 text-center row-enter">
+        <div className="card p-12 text-center">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4 text-text-muted">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
             <line x1="3" y1="9" x2="21" y2="9" />
@@ -134,7 +134,7 @@ export default function AccountsPage({ onNavigate }: AccountsPageProps) {
       ) : (
         <div className="flex flex-col gap-4">
           {connections.map((bc, i) => (
-            <div key={bc.id} className="card row-enter" style={{ animationDelay: `${i * 0.05}s` }}>
+            <div key={bc.id} className="card">
               {/* Connection header */}
               <div className="flex items-center justify-between px-4 py-3 border-b-2 border-border">
                 <div className="flex items-center gap-3 min-w-0">
