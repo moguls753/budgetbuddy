@@ -40,13 +40,16 @@ RSpec.describe "Api::V1::Transactions", type: :request do
   end
 
   describe "POST /categorize" do
-    it "enqueues job when LLM is configured" do
+    it "runs categorization and returns results" do
       create(:llm_credential, user: user)
+      categorizer = instance_double(LlmCategorizer)
+      allow(LlmCategorizer).to receive(:new).with(user).and_return(categorizer)
+      allow(categorizer).to receive(:categorize_uncategorized).and_return({ total: 5, categorized: 3, failed: 0 })
 
-      expect { post categorize_api_v1_transactions_path, as: :json }
-        .to have_enqueued_job(CategorizeTransactionsJob).with(user.id)
+      post categorize_api_v1_transactions_path, as: :json
 
-      expect(response).to have_http_status(:accepted)
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body["categorized"]).to eq(3)
     end
 
     it "returns 422 when LLM is not configured" do

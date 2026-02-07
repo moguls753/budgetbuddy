@@ -30,8 +30,8 @@ module Api
       def categorize
         return render json: { error: "LLM not configured" }, status: :unprocessable_content unless Current.user.llm_credential
 
-        CategorizeTransactionsJob.perform_later(Current.user.id)
-        render json: { status: "queued" }, status: :accepted
+        results = CategorizeTransactionsJob.perform_now(Current.user.id)
+        render json: results
       end
 
       private

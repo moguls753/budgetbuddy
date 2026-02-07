@@ -152,20 +152,23 @@ export default function TransactionsPage() {
           title={t('transactions.date_to')}
         />
         <button
-          className={`btn text-xs ${uncategorized ? 'btn-primary' : 'btn-ghost'}`}
-          style={{ padding: '0.5rem 0.75rem' }}
+          className={`btn text-xs px-3 py-2 ${uncategorized ? 'btn-primary' : 'btn-ghost'}`}
           onClick={() => setUncategorized(!uncategorized)}
         >
           {t('transactions.filter_uncategorized')}
         </button>
         {llmConfigured && (
           <button
-            className="btn btn-primary text-xs"
-            style={{ padding: '0.5rem 0.75rem' }}
+            className="btn btn-primary text-xs px-3 py-2"
             onClick={handleCategorize}
             disabled={isCategorizing}
           >
-            {isCategorizing ? t('transactions.categorizing') : t('transactions.categorize')}
+            {isCategorizing ? (
+              <span className="flex items-center gap-2">
+                <span className="spinner" />
+                {t('transactions.categorizing')}
+              </span>
+            ) : t('transactions.categorize')}
           </button>
         )}
       </div>
