@@ -72,7 +72,6 @@ export default {
     filter_account: 'Alle Konten',
     filter_category: 'Alle Kategorien',
     filter_uncategorized: 'Nur unkategorisiert',
-    filter_dates: 'Zeitraum',
     date_from: 'Von',
     date_to: 'Bis',
     page_of: 'Seite {{page}} von {{total}}',

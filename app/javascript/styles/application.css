@@ -548,21 +548,7 @@
     width: auto;
   }
 
-  /* Date filters — collapsible row */
-  .filter-bar-dates {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-top: 2px solid var(--color-border);
-  }
-
-  .filter-bar-dates .input {
-    padding: 0.375rem 0.625rem;
-    font-size: 0.8125rem;
-    border-width: 2px;
-    background-color: var(--color-surface-raised);
+  .filter-bar input[type="date"].input {
     width: auto;
     min-width: 8.5rem;
   }

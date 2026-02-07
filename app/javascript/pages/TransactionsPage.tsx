@@ -32,9 +32,6 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
   const [llmConfigured, setLlmConfigured] = useState(false)
   const [showCategorizeModal, setShowCategorizeModal] = useState(false)
 
-  // Date filter toggle
-  const [showDateFilters, setShowDateFilters] = useState(false)
-
   // Expanded row
   const [expandedId, setExpandedId] = useState<number | null>(null)
 
@@ -114,7 +111,6 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
     setDateFrom('')
     setDateTo('')
     setUncategorized(false)
-    setShowDateFilters(false)
   }
 
   return (
@@ -165,17 +161,25 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
               ))}
             </select>
           )}
+          <input
+            type="date"
+            className="input"
+            value={dateFrom}
+            onChange={e => setDateFrom(e.target.value)}
+            title={t('transactions.date_from')}
+          />
+          <input
+            type="date"
+            className="input"
+            value={dateTo}
+            onChange={e => setDateTo(e.target.value)}
+            title={t('transactions.date_to')}
+          />
           <button
             className={`btn text-xs px-3 py-2 ${uncategorized ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => setUncategorized(!uncategorized)}
           >
             {t('transactions.filter_uncategorized')}
-          </button>
-          <button
-            className={`btn text-xs px-3 py-2 ${(showDateFilters || dateFrom || dateTo) ? 'btn-primary' : 'btn-ghost'}`}
-            onClick={() => setShowDateFilters(!showDateFilters)}
-          >
-            {t('transactions.filter_dates')}
           </button>
           {hasFilters && (
             <button
@@ -186,29 +190,10 @@ export default function TransactionsPage({ onNavigate }: { onNavigate?: (view: V
             </button>
           )}
         </div>
-
-        {showDateFilters && (
-          <div className="filter-bar-dates">
-            <label className="text-xs text-text-muted font-medium">{t('transactions.date_from')}</label>
-            <input
-              type="date"
-              className="input"
-              value={dateFrom}
-              onChange={e => setDateFrom(e.target.value)}
-            />
-            <label className="text-xs text-text-muted font-medium">{t('transactions.date_to')}</label>
-            <input
-              type="date"
-              className="input"
-              value={dateTo}
-              onChange={e => setDateTo(e.target.value)}
-            />
-          </div>
-        )}
       </div>
 
       {/* Transaction list */}
-      <div className="card mt-1.5">
+      <div className="card mt-3">
         {error ? (
           <div className="p-8">
             <div className="error-message flex items-center justify-between">
